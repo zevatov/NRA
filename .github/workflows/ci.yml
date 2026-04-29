@@ -20,7 +20,7 @@ jobs:
     - name: Install system dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y libfuse-dev pkg-config
+        sudo apt-get install -y libfuse-dev libfuse3-dev pkg-config
 
     - name: Install Rust toolchain
       uses: dtolnay/rust-toolchain@stable
@@ -35,11 +35,11 @@ jobs:
       continue-on-error: true
 
     - name: Lint (Clippy)
-      run: cargo clippy --workspace --exclude nra-python --exclude nra-gui --all-targets -- -D warnings
+      run: cargo clippy --workspace --exclude nra-python --all-targets -- -D warnings
       continue-on-error: true
 
     - name: Run tests
-      run: cargo test --workspace --exclude nra-python --exclude nra-gui
+      run: cargo test --workspace --exclude nra-python
 
     - name: Build CLI (Release)
       run: cargo build --release -p nra-cli

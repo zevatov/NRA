@@ -9,7 +9,6 @@ members = [
     "nra-registry-server",
     "bench_tool",
 ]
-exclude = ["nra-gui"]
 resolver = "2"
 
 [workspace.package]
