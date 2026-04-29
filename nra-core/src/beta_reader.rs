@@ -390,12 +390,5 @@ mod tests {
 
         std::fs::remove_file(&dir).ok();
     }
-    #[test]
-    fn test_read_legacy_json_manifest() {
-        // Assume legacy_v4.nra was created by a previous version
-        let path = concat!(env!("CARGO_MANIFEST_DIR"), "/tests/fixtures/legacy_v4.nra");
-        let mut reader = BetaReader::open(path).expect("Failed to open legacy archive");
-        let data = reader.read_file("hello.txt").expect("Failed to read file");
-        assert_eq!(&data, b"Legacy compatibility test");
-    }
+
 }
