@@ -5,7 +5,7 @@
   **🌐 Language / Язык: [English](README.md) | [Русский](README_RU.md)**
 
   [![PyPI version](https://img.shields.io/pypi/v/nra.svg)](https://pypi.org/project/nra/)
-  [![PyPI - Version](https://img.shields.io/badge/latest-1.0.0-brightgreen)](https://pypi.org/project/nra/1.0.0/)
+  [![PyPI - Version](https://img.shields.io/badge/latest-1.0.1-brightgreen)](https://pypi.org/project/nra/1.0.1/)
   [![Rust](https://img.shields.io/badge/rust-1.80+-blue.svg)](https://www.rust-lang.org)
   [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
   [![HuggingFace](https://img.shields.io/badge/🤗_HuggingFace-Dataset-yellow)](https://huggingface.co/datasets/zevatov/nra-cifar10)
@@ -56,7 +56,7 @@ NRA v4.5 is the **only** format that scores maximum across **all** technical par
 We host a pre-packaged CIFAR-10 dataset in `.nra` format on Hugging Face. **Train a model right now without downloading a single byte:**
 
 ```bash
-pip install nra==1.0.0 torch
+pip install nra==1.0.1 torch
 ```
 
 ```python
@@ -152,7 +152,7 @@ Why should your company transition to NRA?
 
 We built a complete suite of tools for seamless integration:
 
-1. **Python SDK ([`pip install nra==1.0.0`](https://pypi.org/project/nra/1.0.0/)):** Integration into PyTorch and TensorFlow.
+1. **Python SDK ([`pip install nra==1.0.1`](https://pypi.org/project/nra/1.0.1/)):** Integration into PyTorch and TensorFlow.
 2. **NRA CLI (`cargo install nra-cli`):** Console utility for servers. Allows unpacking, packing, and streaming files directly from the terminal.
 3. **NRA GUI:** An elegant desktop application (Windows/Mac/Linux) for visual archive management. *(Currently in development: [zevatov/nra-manager-pro](https://github.com/zevatov/nra-manager-pro))*
 4. **FUSE Mount:** Mount `.nra` archives like standard virtual USB drives directly into your filesystem (`nra-cli mount`).

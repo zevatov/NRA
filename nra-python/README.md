@@ -28,6 +28,18 @@ We ran a stress test on 60,000 small files (CIFAR-10):
 
 NRA extracts 100% of your CPU's multi-core power (thanks to Rust Rayon) and glues files into 4MB Solid blocks, guaranteeing instant O(1) random access.
 
+<div align="center">
+  <img src="https://raw.githubusercontent.com/zevatov/NRA/main/docs/assets/archiver_benchmark_en.png" alt="Archiver Benchmark" width="800"/>
+</div>
+
+---
+
+## 🏆 Competitive Radar: NRA vs Everyone
+
+<div align="center">
+  <img src="https://raw.githubusercontent.com/zevatov/NRA/main/docs/assets/radar_en.png" alt="NRA Competitive Radar" width="700"/>
+</div>
+
 ---
 
 ## 🚀 Try It Now: Train Online Without Downloading
@@ -35,7 +47,7 @@ NRA extracts 100% of your CPU's multi-core power (thanks to Rust Rayon) and glue
 ### Use our ready-made dataset on Hugging Face
 
 ```bash
-pip install nra==1.0.0 torch
+pip install nra==1.0.1 torch
 ```
 
 ```python
@@ -106,7 +118,7 @@ sequenceDiagram
 
 ## 🛠️ The NRA Ecosystem
 
-1. **Python SDK (`pip install nra==1.0.0`):** Integration into PyTorch and TensorFlow.
+1. **Python SDK (`pip install nra==1.0.1`):** Integration into PyTorch and TensorFlow.
 2. **NRA CLI (`cargo install nra-cli`):** Console utility for servers.
 3. **NRA GUI:** Desktop application for visual archive management. *(In development: [zevatov/nra-manager-pro](https://github.com/zevatov/nra-manager-pro))*
 4. **FUSE Mount:** Mount `.nra` archives as virtual drives (`nra-cli mount`).
