@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build_and_test:
+    name: Rust CI
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install Rust toolchain
+      uses: dtolnay/rust-toolchain@stable
+      with:
+        components: rustfmt, clippy
+
+    - name: Rust Cache
+      uses: Swatinem/rust-cache@v2
+
+    - name: Check formatting
+      run: cargo fmt --all -- --check
+
+    - name: Lint (Clippy)
+      run: cargo clippy --workspace --exclude nra-python --exclude nra-gui --all-targets -- -D warnings
+
+    - name: Run tests
+      run: cargo test --workspace --exclude nra-python --exclude nra-gui
+
+    - name: Run E2E tests
+      run: cargo test -p nra-core --test e2e_server
+
+    - name: Build CLI (Release)
+      run: cargo build --release -p nra-cli

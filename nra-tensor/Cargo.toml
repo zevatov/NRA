@@ -1,0 +1,11 @@
+[package]
+name = "nra-tensor"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[dependencies]
+safetensors = "0.4.5"
+memmap2 = "0.9.5"
+nra-core = { path = "../nra-core" }

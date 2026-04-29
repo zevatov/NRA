@@ -1,0 +1,17 @@
+[package]
+name = "nra-python"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[lib]
+name = "nra"
+crate-type = ["cdylib"]
+
+[dependencies]
+nra-core = { path = "../nra-core" }
+pyo3 = { workspace = true, features = ["extension-module"] }
+anyhow.workspace = true
+tokio = { workspace = true, features = ["rt", "rt-multi-thread", "macros"] }
+nra-registry = { path = "../nra-registry" }

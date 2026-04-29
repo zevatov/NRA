@@ -1,0 +1,71 @@
+// nra_manifest.fbs — Neural Ready Archive Manifest Schema v1
+
+namespace NRA;
+
+enum Compression : byte { None = 0, Zstd = 1, LZ4 = 2 }
+enum DistanceMetric : byte { Cosine = 0, L2 = 1, InnerProduct = 2 }
+enum VectorDType : byte { Float32 = 0, Float16 = 1, Int8 = 2, Binary = 3 }
+
+// ═══════════════════════════════════════════
+//  Embedding Space Definition
+// ═══════════════════════════════════════════
+
+table EmbeddingSpace {
+  id: string (required);              // Уникальный ключ: "clip_v1", "bge_m3"
+  model_uri: string (required);       // "hf://openai/clip-vit-base-patch32"
+  model_version: string;              // "v2.0" (для трекинга версий)
+  dimension: uint16;                  // 512, 768, 1024, 1536...
+  metric: DistanceMetric = Cosine;
+  dtype: VectorDType = Float16;       // По умолчанию Float16 для экономии
+  modality: string;                   // "text", "image", "audio", "multimodal"
+  created_at: string;                 // ISO 8601 timestamp
+}
+
+// ═══════════════════════════════════════════
+//  File Record (один файл в архиве)
+// ═══════════════════════════════════════════
+
+table FileVector {
+  space_id: string (required);        // Ссылка на EmbeddingSpace.id
+  data: [byte] (required);            // Сырые байты вектора
+}
+
+table FileRecord {
+  id: string (required);              // "img_00001.jpg" или UUID
+  mime_type: string;                  // "image/jpeg", "text/plain"
+  offset: uint64;                     // Смещение в Data Section
+  compressed_size: uint64;
+  original_size: uint64;
+  crc32: uint32;                      // Контрольная сумма блока
+  compression: Compression = Zstd;
+  vectors: [FileVector];              // Все эмбеддинги этого файла
+  tags: [string];                     // Пользовательские теги/метки
+}
+
+// ═══════════════════════════════════════════
+//  Summary Header (первые КБ манифеста)
+// ═══════════════════════════════════════════
+
+table SummaryHeader {
+  name: string;                       // Название датасета
+  description: string;
+  author: string;
+  license: string;                    // "MIT", "CC-BY-4.0"
+  created_at: string;
+  total_files: uint64;
+  total_original_size: uint64;
+  total_compressed_size: uint64;
+}
+
+// ═══════════════════════════════════════════
+//  Root Manifest
+// ═══════════════════════════════════════════
+
+table Manifest {
+  version: string (required);         // "1.0.0"
+  summary: SummaryHeader;
+  spaces: [EmbeddingSpace];
+  files: [FileRecord];
+}
+
+root_type Manifest;

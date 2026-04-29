@@ -1,0 +1,14 @@
+[package]
+name = "nra-registry"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[dependencies]
+nra-core = { path = "../nra-core" }
+reqwest = { workspace = true }
+thiserror = "1.0"
+serde_json = { workspace = true }
+indicatif = "0.17"
+tokio = { workspace = true }

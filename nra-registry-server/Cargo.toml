@@ -1,0 +1,18 @@
+[package]
+name = "nra-registry-server"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[dependencies]
+axum = { workspace = true }
+tokio = { workspace = true }
+tower-http = { version = "0.5", features = ["fs", "trace"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+nra-core = { path = "../nra-core" }
+tokio-tar = "0.3.1"
+tokio-util = { version = "0.7", features = ["io-util"] }
+futures-util = "0.3"
+bytes = "1.0"

@@ -1,0 +1,20 @@
+[package]
+name = "nra-cli"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[dependencies]
+nra-core = { path = "../nra-core" }
+clap.workspace = true
+anyhow.workspace = true
+tokio = { workspace = true, features = ["rt", "rt-multi-thread", "macros"] }
+nra-registry = { path = "../nra-registry" }
+rayon.workspace = true
+tar.workspace = true
+zip.workspace = true
+flate2.workspace = true
+fuser.workspace = true
+libc.workspace = true
+reqwest.workspace = true

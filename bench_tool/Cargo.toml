@@ -1,0 +1,15 @@
+[package]
+name = "bench_tool"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[dependencies]
+flate2 = "1.1.9"
+nra-core = { version = "1.0.0", path = "../nra-core" }
+rand = "0.8"
+serde_json.workspace = true
+tar = "0.4.45"
+zip = "8.6.0"
+zstd = "0.13"

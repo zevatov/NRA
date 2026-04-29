@@ -1,0 +1,30 @@
+[package]
+name = "nra-core"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[dependencies]
+nra-spec = { path = "../nra-spec" }
+zstd.workspace = true
+sha2.workspace = true
+crc32fast.workspace = true
+monoio.workspace = true
+anyhow.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+rmp-serde.workspace = true
+fastcdc.workspace = true
+blake3.workspace = true
+tokio = { workspace = true, features = ["sync"] }
+lz4_flex.workspace = true
+aes-gcm.workspace = true
+rayon.workspace = true
+fuser.workspace = true
+libc.workspace = true
+memmap2 = "0.9.10"
+base64 = "0.22.1"
+
+[dev-dependencies]
+tempfile = "3.10.1"
