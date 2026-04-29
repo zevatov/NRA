@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 Questions & Discussion
+    url: https://github.com/zevatov/NRA/discussions
+    about: Ask questions, share use cases, and discuss NRA in our Discussions forum.
+  - name: 📦 PyPI Package
+    url: https://pypi.org/project/nra/
+    about: Install the Python SDK — pip install nra
+  - name: 🤗 HuggingFace Dataset
+    url: https://huggingface.co/datasets/zevatov/nra-cifar10
+    about: Try our ready-made NRA dataset for instant cloud training
