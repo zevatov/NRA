@@ -2,6 +2,8 @@
   <h1>🧬 NRA (Neural Ready Archive)</h1>
   <p><b>The 21st Century Data Format for the AI Era. Forget about <code>tar.gz</code> and <code>zip</code>.</b></p>
 
+  **🌐 Language / Язык: [English](README.md) | [Русский](README_RU.md)**
+
   [![PyPI version](https://img.shields.io/pypi/v/nra.svg)](https://pypi.org/project/nra/)
   [![PyPI - Version](https://img.shields.io/badge/latest-1.0.0-brightgreen)](https://pypi.org/project/nra/1.0.0/)
   [![Rust](https://img.shields.io/badge/rust-1.80+-blue.svg)](https://www.rust-lang.org)
@@ -30,7 +32,7 @@ We ran a stress test on 60,000 small files (CIFAR-10) on Mac OS:
 NRA extracts 100% of your CPU's multi-core power (thanks to Rust Rayon) and glues files into 4MB Solid blocks, guaranteeing instant O(1) random access.
 
 <div align="center">
-  <img src="docs/assets/archiver_benchmark.png" alt="Archiver Benchmark" width="800"/>
+  <img src="docs/assets/archiver_benchmark_en.png" alt="Archiver Benchmark" width="800"/>
 </div>
 
 ---

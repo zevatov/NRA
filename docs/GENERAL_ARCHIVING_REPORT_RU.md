@@ -21,7 +21,7 @@
 
 > **Внимание на график:** Ниже представлена визуализация этих данных (гистограммы скорости и размера).
 > 
-> ![Benchmark Chart](assets/archiver_benchmark.png)
+> ![Benchmark Chart](assets/archiver_benchmark_ru.png)
 
 ---
 

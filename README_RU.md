@@ -2,6 +2,8 @@
   <h1>🧬 NRA (Neural Ready Archive)</h1>
   <p><b>Формат данных 21 века для эпохи ИИ. Забудьте про <code>tar.gz</code> и <code>zip</code>.</b></p>
 
+  **🌐 Language / Язык: [English](README.md) | [Русский](README_RU.md)**
+
   [![PyPI version](https://img.shields.io/pypi/v/nra.svg)](https://pypi.org/project/nra/)
   [![PyPI - Version](https://img.shields.io/badge/latest-1.0.0-brightgreen)](https://pypi.org/project/nra/1.0.0/)
   [![Rust](https://img.shields.io/badge/rust-1.80+-blue.svg)](https://www.rust-lang.org)
@@ -30,7 +32,7 @@
 NRA выжимает 100% из всех ядер вашего процессора (благодаря Rust Rayon) и склеивает файлы в 4-мегабайтные Solid-блоки, обеспечивая мгновенный случайный доступ O(1).
 
 <div align="center">
-  <img src="docs/assets/archiver_benchmark.png" alt="Archiver Benchmark" width="800"/>
+  <img src="docs/assets/archiver_benchmark_ru.png" alt="Archiver Benchmark" width="800"/>
 </div>
 
 ---
