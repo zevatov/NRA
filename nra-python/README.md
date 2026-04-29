@@ -6,6 +6,7 @@
   [![Rust](https://img.shields.io/badge/rust-1.80+-blue.svg)](https://www.rust-lang.org)
   [![License](https://img.shields.io/badge/license-MIT-green.svg)](https://opensource.org/licenses/MIT)
   [![HuggingFace](https://img.shields.io/badge/🤗_HuggingFace-Dataset-yellow)](https://huggingface.co/datasets/zevatov/nra-cifar10)
+  [![GitHub](https://img.shields.io/badge/GitHub-zevatov%2FNRA-black?logo=github)](https://github.com/zevatov/NRA)
 </div>
 
 <br/>
@@ -26,8 +27,6 @@ We ran a stress test on 60,000 small files (CIFAR-10):
 | 🛑 **ZIP** | 13.4 seconds | Impossible (Requires full download) |
 | 🏆 **NRA** | **3.3 seconds** (11.5x faster) | **150 milliseconds** (Zero-Download) |
 
-NRA extracts 100% of your CPU's multi-core power (thanks to Rust Rayon) and glues files into 4MB Solid blocks, guaranteeing instant O(1) random access.
-
 <div align="center">
   <img src="https://raw.githubusercontent.com/zevatov/NRA/main/docs/assets/archiver_benchmark_en.png" alt="Archiver Benchmark" width="800"/>
 </div>
@@ -35,6 +34,8 @@ NRA extracts 100% of your CPU's multi-core power (thanks to Rust Rayon) and glue
 ---
 
 ## 🏆 Competitive Radar: NRA vs Everyone
+
+NRA v4.5 is the **only** format that scores maximum across **all** technical parameters:
 
 <div align="center">
   <img src="https://raw.githubusercontent.com/zevatov/NRA/main/docs/assets/radar_en.png" alt="NRA Competitive Radar" width="700"/>
@@ -47,7 +48,7 @@ NRA extracts 100% of your CPU's multi-core power (thanks to Rust Rayon) and glue
 ### Use our ready-made dataset on Hugging Face
 
 ```bash
-pip install nra==1.0.1 torch
+pip install nra torch
 ```
 
 ```python
@@ -84,41 +85,30 @@ for batch in loader:
 
 > 🤗 **[Open the dataset on Hugging Face →](https://huggingface.co/datasets/zevatov/nra-cifar10)**
 
-### Convert ANY existing dataset on-the-fly
-
-Already have a `tar.gz` or `zip` dataset? NRA can **convert it live** — still faster than downloading:
-
-```bash
-# Convert tar.gz → NRA in 1-3 seconds (Zero-Disk I/O, pure RAM)
-nra-cli convert --input dataset.tar.gz --output dataset.nra
-```
-
-> Converting `Tar.gz → NRA` takes **0.71 seconds** vs **8.35 seconds** to unpack to SSD. **11x faster.**
-
 ---
 
 ## 🏗️ How Cloud Architecture Works (Zero-Disk I/O)
 
-```mermaid
-sequenceDiagram
-    participant PT as PyTorch (Python)
-    participant Core as NRA Core (Rust)
-    participant S3 as HuggingFace / S3
-    
-    PT->>Core: Give me "image_99.png"
-    Note over Core: B+ Tree manifest lookup (O(1))
-    Core->>S3: HTTP GET (Range: bytes=4000-8000)
-    S3-->>Core: Returns compressed 4MB Solid Block
-    Note over Core: Zstd Decompression in RAM
-    Core-->>PT: Returns raw bytes (Zero-Disk I/O)
-    Note over PT: GPU instantly receives the tensor
 ```
+PyTorch DataLoader
+       │
+       ▼
+NRA Core (Rust)  ──── B+ Tree manifest lookup O(1)
+       │
+       ▼
+HTTP GET Range: bytes=X-Y  →  HuggingFace / S3
+       │
+       ▼
+Zstd decompress in RAM  →  raw bytes  →  GPU tensor
+```
+
+> **Zero Disk I/O.** Your SSD is never touched. Data flows: Cloud → RAM → GPU.
 
 ---
 
 ## 🛠️ The NRA Ecosystem
 
-1. **Python SDK (`pip install nra==1.0.1`):** Integration into PyTorch and TensorFlow.
+1. **Python SDK (`pip install nra`):** Integration into PyTorch and TensorFlow.
 2. **NRA CLI (`cargo install nra-cli`):** Console utility for servers.
 3. **NRA GUI:** Desktop application for visual archive management. *(In development: [zevatov/nra-manager-pro](https://github.com/zevatov/nra-manager-pro))*
 4. **FUSE Mount:** Mount `.nra` archives as virtual drives (`nra-cli mount`).
@@ -130,7 +120,7 @@ sequenceDiagram
 
 | Milestone | Status |
 |-----------|--------|
-| **1.0** Core Engine (Zstd/LZ4, B+ Tree, CDC, AES-256) | ✅ Released |
+| **1.0** Core Engine (NRA Format Spec v4.5) | ✅ Released |
 | **1.0** Python SDK + PyTorch DataLoader | ✅ Released |
 | **1.0** CLI (pack, extract, convert, stream, mount) | ✅ Released |
 | **1.1** NRA Manager Pro (GUI) | 🔧 In Progress |
@@ -144,7 +134,7 @@ sequenceDiagram
 
 ## 📚 Deep Documentation
 
-For full architectural documentation, whitepapers, and archiving benchmarks, visit our [Official GitHub Repository](https://github.com/zevatov/NRA).
+For full architectural documentation, whitepapers, and archiving benchmarks, visit our **[Official GitHub Repository](https://github.com/zevatov/NRA)**.
 
 ## License
 The `nra-core`, `nra-cli`, and `nra-python` components are distributed under the **MIT** license.

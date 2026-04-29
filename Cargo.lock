@@ -228,7 +228,7 @@ checksum = "72b3254f16251a8381aa12e40e3c4d2f0199f8c6508fbecb9d91f575e0fbb8c6"
 
 [[package]]
 name = "bench_tool"
-version = "1.0.1"
+version = "1.0.2"
 dependencies = [
  "flate2",
  "nra-core",
@@ -1521,7 +1521,7 @@ dependencies = [
 
 [[package]]
 name = "nra-cli"
-version = "1.0.1"
+version = "1.0.2"
 dependencies = [
  "anyhow",
  "clap",
@@ -1539,7 +1539,7 @@ dependencies = [
 
 [[package]]
 name = "nra-core"
-version = "1.0.1"
+version = "1.0.2"
 dependencies = [
  "aes-gcm",
  "anyhow",
@@ -1565,7 +1565,7 @@ dependencies = [
 
 [[package]]
 name = "nra-python"
-version = "1.0.1"
+version = "1.0.2"
 dependencies = [
  "anyhow",
  "nra-core",
@@ -1576,7 +1576,7 @@ dependencies = [
 
 [[package]]
 name = "nra-registry"
-version = "1.0.1"
+version = "1.0.2"
 dependencies = [
  "indicatif",
  "nra-core",
@@ -1588,7 +1588,7 @@ dependencies = [
 
 [[package]]
 name = "nra-registry-server"
-version = "1.0.1"
+version = "1.0.2"
 dependencies = [
  "axum",
  "bytes",
@@ -1604,7 +1604,7 @@ dependencies = [
 
 [[package]]
 name = "nra-spec"
-version = "1.0.1"
+version = "1.0.2"
 dependencies = [
  "flatbuffers",
  "flatc-rust",
@@ -1612,7 +1612,7 @@ dependencies = [
 
 [[package]]
 name = "nra-tensor"
-version = "1.0.1"
+version = "1.0.2"
 dependencies = [
  "memmap2",
  "nra-core",
