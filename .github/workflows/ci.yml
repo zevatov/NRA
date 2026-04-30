@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, dev ]
   pull_request:
     branches: [ main ]
 
@@ -10,10 +10,9 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  build_and_test:
+  rust_ci:
     name: Rust CI
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v4
 
@@ -43,3 +42,26 @@ jobs:
 
     - name: Build CLI (Release)
       run: cargo build --release -p nra-cli
+
+  python_wheel:
+    name: Python Wheel (test build)
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+
+    - name: Build Python wheel
+      uses: PyO3/maturin-action@v1
+      with:
+        target: x86_64
+        args: --release --out dist -m nra-python/Cargo.toml -i python3.10
+        sccache: 'true'
+        manylinux: auto
+
+    - name: Verify wheel
+      run: |
+        pip install dist/*.whl
+        python -c "import nra; print(f'✅ nra {nra.__version__} imported successfully')"
