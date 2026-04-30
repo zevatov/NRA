@@ -287,16 +287,16 @@ The miracle of "Instant Training" is based on three fundamental NRA design choic
 
 3. **Smart Caching:** Since files are packed into 4 MB Solid blocks, the fetched block is LRU-cached in memory. Subsequent requests for adjacent files are served locally, completely eliminating network latency.
 
-Thanks to this architecture, you can start training with **a single line of code**. Anyone can copy this code right now and test streaming on our official demo dataset (CIFAR-10):
+Thanks to this architecture, you can start training with **a single line of code**. Anyone can copy this code right now and test streaming on our official demo dataset (5GB Food-101):
 
 ```python
 import nra
 
 # Connect to the real archive directly on Hugging Face (no download required!)
-dataset = nra.BetaArchive("https://huggingface.co/datasets/zevatov/nra-cifar10/resolve/main/cifar10.nra")
+dataset = nra.BetaArchive("https://huggingface.co/datasets/zevatov/nra-food101/resolve/main/food-101.nra")
 
 # PyTorch instantly fetches files directly from the cloud via network (O(1))
-image_bytes = dataset.read_file("train/00499_truck.png")
+image_bytes = dataset.read_file("images/pizza/1001116.jpg")
 ```
 
 The library only downloads the lightweight Manifest (0.08 sec), and then fetches required data on the fly. **No download waiting, zero local disk usage.**
