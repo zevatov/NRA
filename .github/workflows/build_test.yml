@@ -70,27 +70,8 @@ jobs:
           python -c "import nra; print('Windows x64 OK')"
         shell: pwsh
 
-  macos-x86:
-    name: "macOS x86_64"
-    runs-on: macos-13
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.10'
-      - name: Build wheel
-        uses: PyO3/maturin-action@v1
-        with:
-          target: x86_64
-          args: --release --out dist -m nra-python/Cargo.toml -i python3.10
-          sccache: 'true'
-      - name: Verify
-        run: |
-          pip install dist/*.whl
-          python -c "import nra; print('macOS x86_64 OK')"
-
-  macos-arm:
-    name: "macOS aarch64"
+  macos-universal:
+    name: "macOS Universal2"
     runs-on: macos-14
     steps:
       - uses: actions/checkout@v4
@@ -100,17 +81,17 @@ jobs:
       - name: Build wheel
         uses: PyO3/maturin-action@v1
         with:
-          target: aarch64
+          target: universal2-apple-darwin
           args: --release --out dist -m nra-python/Cargo.toml -i python3.10
           sccache: 'true'
       - name: Verify
         run: |
           pip install dist/*.whl
-          python -c "import nra; print('macOS aarch64 OK')"
+          python -c "import nra; print('macOS Universal2 OK')"
 
   summary:
     name: "All Platforms ✅"
     runs-on: ubuntu-latest
-    needs: [linux-x86, linux-arm, windows, macos-x86, macos-arm]
+    needs: [linux-x86, linux-arm, windows, macos-universal]
     steps:
-      - run: echo "All 5 platforms built and verified successfully!"
+      - run: echo "All platforms built and verified successfully!"
