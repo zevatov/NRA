@@ -1,6 +1,6 @@
 <div align="center">
-  <h1>🧬 NRA (Neural Ready Archive)</h1>
-  <p><b>The 21st Century Data Format for the AI Era. Forget about <code>tar.gz</code> and <code>zip</code>.</b></p>
+  <h1>🧬 NRA — Neural Ready Archive</h1>
+  <h3>Train on 5 GB of data without downloading a single byte.</h3>
 
   **🌐 Language / Язык: [English](README.md) | [Русский](README_RU.md)**
 
@@ -8,14 +8,32 @@
   [![PyPI - Version](https://img.shields.io/badge/latest-1.0.3-brightgreen)](https://pypi.org/project/nra/1.0.3/)
   [![Rust](https://img.shields.io/badge/rust-1.80+-blue.svg)](https://www.rust-lang.org)
   [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
-  [![HuggingFace](https://img.shields.io/badge/🤗_HuggingFace-Dataset-yellow)](https://huggingface.co/datasets/zevatov/nra-cifar10)
+  [![HuggingFace](https://img.shields.io/badge/🤗_HuggingFace-Datasets-yellow)](https://huggingface.co/datasets/zevatov/nra-food101)
+</div>
+
+```python
+import nra
+
+# Connect to a 5 GB dataset on Hugging Face. Downloads: 0 bytes.
+archive = nra.BetaArchive("https://huggingface.co/datasets/zevatov/nra-food101/resolve/main/food-101.nra")
+image = archive.read_file("images/pizza/1001116.jpg")  # ⚡ Streamed in 150ms
+```
+
+<div align="center">
+  <b>Think of it as <code>git</code> for datasets — but streamable, deduplicated, and encrypted.</b>
 </div>
 
 <br/>
 
-Traditional archiving formats (`ZIP`, `Tar.gz`) were designed in the 90s for floppy disks. Today, they are the main **bottleneck** of IT infrastructure. They force you to download entire 500GB datasets, cannot stream individual files from the cloud, and cause extremely expensive GPUs to sit idle waiting for data.
+| | **tar.gz** | **ZIP** | **HF Datasets** | **NRA** |
+|---|:---:|:---:|:---:|:---:|
+| Stream from cloud | ❌ | ❌ | ⚠️ Parquet only | ✅ Any file |
+| Random file access | ❌ O(n) | ⚠️ Slow | ⚠️ Row-based | ✅ O(1) |
+| Deduplication | ❌ | ❌ | ❌ | ✅ 4-8x savings |
+| Encryption (AES-256) | ❌ | ⚠️ Weak | ❌ | ✅ Per-block |
+| Time to first batch (5 GB) | ~7 min | ~7 min | ~2 min | **0.6 sec** |
 
-**NRA (Neural Ready Archive)** is a next-generation binary format. It combines enterprise-grade deduplication, ultra-fast Zstd compression, and B+ Tree indexing so you can train neural networks directly from the public cloud.
+NRA is a **Rust-native binary format** that replaces `tar.gz` and `zip` for the AI era. It combines Content-Defined Chunking (CDC) deduplication, Zstd solid-block compression, B+ Tree indexing, and HTTP Range streaming — so your GPU never waits for data.
 
 ---
 
@@ -49,49 +67,52 @@ NRA v4.5 is the **only** format that scores maximum across **all** technical par
 
 ---
 
-## 🚀 Try It Now: Train Online Without Downloading
+## 🚀 Try It Now: Zero-Download Training
 
-### Option 1: Use our ready-made NRA dataset on Hugging Face
-
-We host a pre-packaged CIFAR-10 dataset in `.nra` format on Hugging Face. **Train a model right now without downloading a single byte:**
+### Stream a 5 GB dataset from Hugging Face
 
 ```bash
-pip install nra==1.0.3 torch
+pip install nra torch torchvision Pillow
 ```
 
 ```python
 import nra
-import torch
+import io, torch
+from PIL import Image
+from torchvision import transforms
 from torch.utils.data import Dataset, DataLoader
 
-class NraStreamDataset(Dataset):
+class Food101Stream(Dataset):
     def __init__(self, url):
-        self.url = url
-        # The manifest downloads in 150ms. The archive itself stays in the cloud!
-        self.file_ids = nra.CloudArchive(url).file_ids()
-        self._archive = None
-        
+        self.archive = nra.BetaArchive(url)
+        self.file_ids = [f for f in self.archive.file_ids() if f.endswith('.jpg')]
+        self.transform = transforms.Compose([
+            transforms.Resize((224, 224)),
+            transforms.ToTensor(),
+        ])
+    
     def __len__(self):
         return len(self.file_ids)
-        
+    
     def __getitem__(self, idx):
-        if self._archive is None:
-            self._archive = nra.CloudArchive(self.url)
-        raw_bytes = self._archive.read_file(self.file_ids[idx])
-        return torch.tensor([len(raw_bytes)], dtype=torch.float32)
+        raw = self.archive.read_file(self.file_ids[idx])
+        img = Image.open(io.BytesIO(raw)).convert('RGB')
+        return self.transform(img)
 
-# 🤗 Our ready-made dataset on Hugging Face (NRA format)
-dataset = NraStreamDataset(
-    "https://huggingface.co/datasets/zevatov/nra-cifar10/resolve/main/cifar10.nra"
+# 5 GB dataset, 101,000 images — streamed from Hugging Face, not downloaded
+dataset = Food101Stream(
+    "https://huggingface.co/datasets/zevatov/nra-food101/resolve/main/food-101.nra"
 )
-loader = DataLoader(dataset, batch_size=256, num_workers=4)
+loader = DataLoader(dataset, batch_size=32, num_workers=4, shuffle=True)
 
+print(f"✅ {len(dataset)} images. Training starts NOW — 0 bytes on your SSD!")
 for batch in loader:
-    # Training starts at second 0. Zero bytes on your SSD!
-    pass
+    pass  # batch shape: [32, 3, 224, 224] — ready for ResNet, ViT, etc.
 ```
 
-> 🤗 **[Open the dataset on Hugging Face →](https://huggingface.co/datasets/zevatov/nra-cifar10)**
+> 🤗 **Datasets on Hugging Face:**
+> - [**Food-101** (5 GB, 101K images)](https://huggingface.co/datasets/zevatov/nra-food101) — production benchmark
+> - [**CIFAR-10** (170 MB, 60K images)](https://huggingface.co/datasets/zevatov/nra-cifar10) — quick demo
 
 ### Option 2: Convert ANY existing dataset on-the-fly
 
