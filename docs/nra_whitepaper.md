@@ -268,14 +268,14 @@ The absolute game-changer of the NRA format, which completely flips the ML indus
 Imagine you have a 50 GB dataset sitting in AWS S3. 
 The traditional approach requires: downloading 50 GB of `tar.gz` (hours of time and traffic costs), then unpacking it to an SSD (more hours and inode exhaustion).
 
-**Benchmark: Cold Start Time from Cloud (50 GB Dataset, 1 Gbps network)**
+**Benchmark: Cold Start Time from Cloud (Food-101 5.0 GB Dataset, 100 Mbps network)**
 
 | Method | Download Time | Unpack Time | Time to First Batch (TTFB) | Global Shuffle? |
 |-------|----------------|------------------|------------------------|---------------------|
-| **Classic (Tar.gz)** | ~409 sec | ~100 sec | ❌ **509.0 seconds** | No |
-| **Raw Disk (S3 -> SSD)** | ~409 sec | 0 sec | ❌ **409.0 seconds** | ✅ Yes |
-| **WebDataset** | 0 sec (Streaming) | 0 sec | ✅ **0.5 seconds** | ❌ **No (Local Buffer)** |
-| **NRA v4.5** | 0 sec (Streaming) | 0 sec | ✅ **0.08 seconds** | ✅ **Yes (O(1))** |
+| **Classic (Tar.gz)** | ~400.0 sec | 25.0 sec | ❌ **425.28 seconds** | No |
+| **Raw Disk (HTTP -> SSD)** | ~400.0 sec | 0.0 sec | ❌ **400.28 seconds** | ✅ Yes |
+| **WebDataset** | 0 sec (Streaming) | 0 sec | ✅ **0.50 seconds** | ❌ **No (Local Buffer)** |
+| **NRA v4.5 Cloud Streaming** | 0 sec (Streaming) | 0 sec | ✅ **0.60 seconds** | ✅ **Yes (O(1))** |
 
 ![Cloud Streaming Benchmark](assets/cloud_streaming_en.png)
 
@@ -306,8 +306,8 @@ To prove its efficiency, we conducted **real neural network training** (SimpleCN
 
 ![End-to-End PyTorch Training Loss](assets/training_loss_time_en.png)
 
-> **Analysis:** The red line (`Tar.gz`) demonstrates "dead time" — the neural network idles for the first **50 seconds** while a stable gigabit connection (1 Gbps) downloads the archive from S3 and the CPU unpacks it. The training loss remains unchanged. 
-> Simultaneously, the cyan line (`NRA v4.5`) starts dropping **immediately**. The Dataloader streams images one by one directly from the cloud, and gradient descent begins with zero latency.
+> **Analysis:** The red line (`Tar.gz`) demonstrates "dead time" — the neural network idles for the first **425 seconds** while a standard 100 Mbps connection downloads the 5GB archive from S3 and the CPU unpacks 101,000 files to the local SSD. The training loss remains unchanged. 
+> Simultaneously, the cyan line (`NRA v4.5`) starts dropping **immediately (in 0.60 seconds)**. The PyTorch Dataloader streams images one by one directly from the cloud using HTTP Range, and gradient descent begins with zero latency.
 
 ### Exclusive Enterprise Tools (Out of the Box):
 Following our `STARTUP_ROADMAP.md` and architectural audits, we embedded features that no competitor (WebDataset, Tar, Parquet) possesses:
