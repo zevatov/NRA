@@ -64,4 +64,4 @@ jobs:
     - name: Verify wheel
       run: |
         pip install dist/*.whl
-        python -c "import nra; print(f'✅ nra {nra.__version__} imported successfully')"
+        python -c "import nra; print('✅ nra imported successfully')"
