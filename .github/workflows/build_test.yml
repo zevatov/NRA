@@ -23,11 +23,11 @@ jobs:
           target: x86_64
           args: --release --out dist -m nra-python/Cargo.toml -i python3.10
           sccache: 'true'
-          manylinux: auto
+          manylinux: 2_28
       - name: Verify
         run: |
           pip install dist/*.whl
-          python -c "import nra; print('✅ Linux x86_64 OK')"
+          python -c "import nra; print('Linux x86_64 OK')"
 
   linux-arm:
     name: "Linux aarch64"
@@ -43,7 +43,7 @@ jobs:
           target: aarch64
           args: --release --out dist -m nra-python/Cargo.toml -i python3.10
           sccache: 'true'
-          manylinux: auto
+          manylinux: 2_28
       - name: Upload test artifact
         uses: actions/upload-artifact@v4
         with:
@@ -67,7 +67,7 @@ jobs:
       - name: Verify
         run: |
           pip install (Get-ChildItem dist/*.whl).FullName
-          python -c "import nra; print('✅ Windows x64 OK')"
+          python -c "import nra; print('Windows x64 OK')"
         shell: pwsh
 
   macos-x86:
@@ -87,7 +87,7 @@ jobs:
       - name: Verify
         run: |
           pip install dist/*.whl
-          python -c "import nra; print('✅ macOS x86_64 OK')"
+          python -c "import nra; print('macOS x86_64 OK')"
 
   macos-arm:
     name: "macOS aarch64"
@@ -106,7 +106,7 @@ jobs:
       - name: Verify
         run: |
           pip install dist/*.whl
-          python -c "import nra; print('✅ macOS aarch64 OK')"
+          python -c "import nra; print('macOS aarch64 OK')"
 
   summary:
     name: "All Platforms ✅"
