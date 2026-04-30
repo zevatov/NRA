@@ -2,7 +2,7 @@
 HuggingFace Datasets integration for Neural Ready Archive (NRA).
 """
 
-__version__ = "0.1.0"
+__version__ = "1.0.3"
 
 def load(archive_path, split="train", streaming=False):
     """

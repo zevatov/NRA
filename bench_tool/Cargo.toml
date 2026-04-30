@@ -7,7 +7,7 @@ license.workspace = true
 
 [dependencies]
 flate2 = "1.1.9"
-nra-core = { version = "1.0.2", path = "../nra-core" }
+nra-core = { version = "1.0.3", path = "../nra-core" }
 rand = "0.8"
 serde_json.workspace = true
 tar = "0.4.45"

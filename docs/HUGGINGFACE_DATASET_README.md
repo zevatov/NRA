@@ -20,7 +20,7 @@ size_categories:
 
 <div align="center">
 
-[![PyPI](https://img.shields.io/badge/pip_install_nra-1.0.2-blue)](https://pypi.org/project/nra/1.0.2/)
+[![PyPI](https://img.shields.io/badge/pip_install_nra-1.0.3-blue)](https://pypi.org/project/nra/1.0.3/)
 [![GitHub](https://img.shields.io/badge/GitHub-zevatov%2FNRA-black?logo=github)](https://github.com/zevatov/NRA)
 [![License](https://img.shields.io/badge/license-MIT-green)](https://opensource.org/licenses/MIT)
 
@@ -45,7 +45,7 @@ This dataset contains **CIFAR-10** (60,000 images) packaged in the **NRA (Neural
 ### Google Colab / Jupyter / Local
 
 ```bash
-pip install nra==1.0.2 torch
+pip install nra==1.0.3 torch
 ```
 
 ```python
@@ -163,14 +163,14 @@ nra-cli pack-beta --input ./your_dataset/ --output your_dataset.nra --dictionary
 | **Images** | 60,000 (32×32 RGB) |
 | **Classes** | 10 |
 | **Compression** | Zstd (level 15) + CDC deduplication |
-| **NRA SDK** | `pip install nra==1.0.2` |
+| **NRA SDK** | `pip install nra==1.0.3` |
 
 ---
 
 ## 📚 Learn More
 
 - 🏠 **[GitHub Repository](https://github.com/zevatov/NRA)** — Full source code, benchmarks, whitepapers
-- 📦 **[PyPI Package](https://pypi.org/project/nra/1.0.2/)** — `pip install nra==1.0.2`
+- 📦 **[PyPI Package](https://pypi.org/project/nra/1.0.3/)** — `pip install nra==1.0.3`
 - 📄 **[Technical Whitepaper](https://github.com/zevatov/NRA/blob/main/docs/nra_whitepaper.md)** — Architecture deep-dive with 8 benchmark charts
 
 ## License
