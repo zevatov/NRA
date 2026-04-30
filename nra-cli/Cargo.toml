@@ -6,7 +6,7 @@ authors.workspace = true
 license.workspace = true
 
 [dependencies]
-nra-core = { path = "../nra-core" }
+nra-core = { path = "../nra-core", features = ["fuse"] }
 clap.workspace = true
 anyhow.workspace = true
 tokio = { workspace = true, features = ["rt", "rt-multi-thread", "macros"] }

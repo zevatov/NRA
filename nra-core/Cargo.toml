@@ -5,6 +5,10 @@ edition.workspace = true
 authors.workspace = true
 license.workspace = true
 
+[features]
+default = []
+fuse = ["dep:fuser", "dep:libc"]
+
 [dependencies]
 nra-spec = { path = "../nra-spec" }
 zstd.workspace = true
@@ -21,8 +25,8 @@ tokio = { workspace = true, features = ["sync"] }
 lz4_flex.workspace = true
 aes-gcm.workspace = true
 rayon.workspace = true
-fuser.workspace = true
-libc.workspace = true
+fuser = { workspace = true, optional = true }
+libc = { workspace = true, optional = true }
 memmap2 = "0.9.10"
 base64 = "0.22.1"
 

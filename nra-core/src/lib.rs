@@ -10,6 +10,7 @@ pub mod dedup;
 pub mod beta_writer;
 pub mod beta_reader;
 pub mod async_reader;
+#[cfg(feature = "fuse")]
 pub mod fuse;
 
 // Stage 3: Advanced Features
