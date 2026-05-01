@@ -8,7 +8,7 @@
   [![PyPI - Version](https://img.shields.io/badge/latest-1.0.3-brightgreen)](https://pypi.org/project/nra/1.0.3/)
   [![Rust](https://img.shields.io/badge/rust-1.80+-blue.svg)](https://www.rust-lang.org)
   [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
-  [![HuggingFace](https://img.shields.io/badge/🤗_HuggingFace-Dataset-yellow)](https://huggingface.co/datasets/zevatov/nra-cifar10)
+  [![HuggingFace](https://img.shields.io/badge/🤗_HuggingFace-Datasets-yellow)](https://huggingface.co/datasets/zevatov/nra-benchmarks)
 </div>
 
 <br/>
@@ -82,7 +82,7 @@ class NraStreamDataset(Dataset):
 
 # 🤗 Наш готовый датасет на Hugging Face (формат NRA)
 dataset = NraStreamDataset(
-    "https://huggingface.co/datasets/zevatov/nra-cifar10/resolve/main/cifar10.nra"
+    "https://huggingface.co/datasets/zevatov/nra-benchmarks/resolve/main/food-101.nra"
 )
 loader = DataLoader(dataset, batch_size=256, num_workers=4)
 
@@ -91,7 +91,7 @@ for batch in loader:
     pass
 ```
 
-> 🤗 **[Открыть датасет на Hugging Face →](https://huggingface.co/datasets/zevatov/nra-cifar10)**
+> 🤗 **Все бенчмарк-датасеты на Hugging Face:** [**zevatov/nra-benchmarks**](https://huggingface.co/datasets/zevatov/nra-benchmarks) — Food-101, Wikitext, Pokemon, Minds14, GPT-2, Synthetic
 
 ### Вариант 2: Конвертируй ЛЮБОЙ существующий датасет на лету
 
@@ -152,11 +152,11 @@ sequenceDiagram
 
 Мы создали полный набор инструментов для интеграции:
 
-1. **Python SDK ([`pip install nra==1.0.3`](https://pypi.org/project/nra/1.0.3/)):** Интеграция в PyTorch и TensorFlow.
-2. **NRA CLI (`cargo install nra-cli`):** Консольная утилита для серверов. Позволяет распаковывать, паковать и стримить файлы через терминал.
+1. **Python SDK ([`pip install nra`](https://pypi.org/project/nra/)):** Интеграция в PyTorch и TensorFlow.
+2. **NRA CLI (`cargo install nra-cli`):** Консольная утилита для серверов. Упаковка, распаковка, стриминг, **верификация** (`verify-beta`) и push на реестр.
 3. **NRA GUI:** Элегантное настольное приложение (Windows/Mac/Linux) для визуального управления архивами. *(Сейчас в разработке: [zevatov/nra-manager-pro](https://github.com/zevatov/nra-manager-pro))*
 4. **FUSE Mount:** Монтируйте `.nra` архивы как обычные виртуальные флешки прямо в файловую систему (`nra-cli mount`).
-5. **🤗 Hugging Face Датасет:** [zevatov/nra-cifar10](https://huggingface.co/datasets/zevatov/nra-cifar10) — готовый NRA-датасет для мгновенного облачного обучения.
+5. **🤗 Hugging Face Бенчмарки:** [zevatov/nra-benchmarks](https://huggingface.co/datasets/zevatov/nra-benchmarks) — готовые NRA-датасеты (Food-101, Wikitext, Pokemon, Minds14, GPT-2) для мгновенного облачного обучения.
 
 ---
 
@@ -166,12 +166,12 @@ sequenceDiagram
 |------|--------|----------|
 | **1.0** Ядро | ✅ Выпущено | NRA Format Spec v4.5: Solid-block Zstd/LZ4 сжатие, B+ Tree манифест, CDC дедупликация, AES-256-GCM шифрование |
 | **1.0** Python SDK | ✅ Выпущено | `CloudArchive` стриминг, интеграция с PyTorch DataLoader, `pip install nra` |
-| **1.0** CLI | ✅ Выпущено | `pack`, `extract`, `convert`, `stream`, `mount` (FUSE) |
+| **1.0** CLI | ✅ Выпущено | `pack`, `unpack`, `convert`, `stream-beta`, `mount` (FUSE), `verify-beta`, `push` |
+| **1.0** Delta Updates | ✅ Выпущено | `nra-cli append` — дозапись новых данных в существующие `.nra` архивы без полной пересборки |
+| **1.0** NRA Registry | ✅ Выпущено | Приватный self-hosted реестр (`nra-registry-server`) + `nra-cli push` |
 | **1.1** NRA Manager Pro | 🔧 В разработке | Кроссплатформенное GUI-приложение (Windows/Mac/Linux) с drag-and-drop управлением архивами |
-| **1.2** Delta Updates | 📋 Планируется | Дозапись новых данных в существующие `.nra` архивы без полной пересборки |
-| **1.3** Managed NRA CDN | 📋 Планируется | Edge-кэширующий прокси для корпоративных дата-центров — доставка с нулевой задержкой |
-| **1.4** NRA Registry | 📋 Планируется | Приватный self-hosted реестр для командного управления датасетами (как Docker Hub для данных) |
-| **1.5** Streaming Converter | 📋 Планируется | Живая конвертация удалённых `tar.gz`/`zip` в NRA на лету, без промежуточного хранения |
+| **1.2** Managed NRA CDN | 📋 Планируется | Edge-кэширующий прокси для корпоративных дата-центров — доставка с нулевой задержкой |
+| **1.3** Streaming Converter | 📋 Планируется | Живая конвертация удалённых `tar.gz`/`zip` в NRA на лету, без промежуточного хранения |
 | **2.0** Мультиплатформенные Wheels | 📋 Планируется | Готовые пакеты для Linux/Windows/Mac на PyPI (установка без Rust toolchain) |
 
 ---
@@ -184,7 +184,8 @@ sequenceDiagram
 - 📄 **[Технический Whitepaper (RU)](docs/nra_whitepaper_ru.md)** — Полная русская версия с детальным анализом.
 - 📊 **[Отчёт по архиваторам](docs/GENERAL_ARCHIVING_REPORT_RU.md)** — Как NRA уничтожает ZIP, 7z и RAR в повседневных задачах и бэкапах серверов.
 - 🛠 **[Developer Guide](docs/NRA_DEVELOPER_GUIDE_RU.md)** — Для контрибьюторов: CDC, Solid-блоки, FUSE mount.
-- 🤗 **[HuggingFace Dataset Card](docs/HUGGINGFACE_DATASET_README.md)** — Шаблон для публикации своих датасетов на HF в формате NRA.
+- 🤗 **[HuggingFace: Food-101 Card](docs/HF_README_FOOD101.md)** — Dataset card для Food-101 NRA бенчмарка.
+- 🤗 **[HuggingFace: CIFAR-10 Card](docs/HF_README_CIFAR10.md)** — Dataset card для CIFAR-10 NRA демо.
 
 ## Лицензия
 Ядро `nra-core`, `nra-cli` и `nra-python` распространяются под лицензией **MIT**.

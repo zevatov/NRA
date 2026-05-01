@@ -8,14 +8,14 @@
   [![PyPI - Version](https://img.shields.io/badge/latest-1.0.3-brightgreen)](https://pypi.org/project/nra/1.0.3/)
   [![Rust](https://img.shields.io/badge/rust-1.80+-blue.svg)](https://www.rust-lang.org)
   [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
-  [![HuggingFace](https://img.shields.io/badge/🤗_HuggingFace-Datasets-yellow)](https://huggingface.co/datasets/zevatov/nra-food101)
+  [![HuggingFace](https://img.shields.io/badge/🤗_HuggingFace-Datasets-yellow)](https://huggingface.co/datasets/zevatov/nra-benchmarks)
 </div>
 
 ```python
 import nra
 
 # Connect to a 5 GB dataset on Hugging Face. Downloads: 0 bytes.
-archive = nra.BetaArchive("https://huggingface.co/datasets/zevatov/nra-food101/resolve/main/food-101.nra")
+archive = nra.CloudArchive("https://huggingface.co/datasets/zevatov/nra-benchmarks/resolve/main/food-101.nra")
 image = archive.read_file("images/pizza/1001116.jpg")  # ⚡ Streamed in 150ms
 ```
 
@@ -84,7 +84,7 @@ from torch.utils.data import Dataset, DataLoader
 
 class Food101Stream(Dataset):
     def __init__(self, url):
-        self.archive = nra.BetaArchive(url)
+        self.archive = nra.CloudArchive(url)
         self.file_ids = [f for f in self.archive.file_ids() if f.endswith('.jpg')]
         self.transform = transforms.Compose([
             transforms.Resize((224, 224)),
@@ -101,7 +101,7 @@ class Food101Stream(Dataset):
 
 # 5 GB dataset, 101,000 images — streamed from Hugging Face, not downloaded
 dataset = Food101Stream(
-    "https://huggingface.co/datasets/zevatov/nra-food101/resolve/main/food-101.nra"
+    "https://huggingface.co/datasets/zevatov/nra-benchmarks/resolve/main/food-101.nra"
 )
 loader = DataLoader(dataset, batch_size=32, num_workers=4, shuffle=True)
 
@@ -110,9 +110,7 @@ for batch in loader:
     pass  # batch shape: [32, 3, 224, 224] — ready for ResNet, ViT, etc.
 ```
 
-> 🤗 **Datasets on Hugging Face:**
-> - [**Food-101** (5 GB, 101K images)](https://huggingface.co/datasets/zevatov/nra-food101) — production benchmark
-> - [**CIFAR-10** (170 MB, 60K images)](https://huggingface.co/datasets/zevatov/nra-cifar10) — quick demo
+> 🤗 **All benchmark datasets on Hugging Face:** [**zevatov/nra-benchmarks**](https://huggingface.co/datasets/zevatov/nra-benchmarks) — Food-101, Wikitext, Pokemon, Minds14, GPT-2 weights, Synthetic
 
 ### Option 2: Convert ANY existing dataset on-the-fly
 
@@ -173,11 +171,11 @@ Why should your company transition to NRA?
 
 We built a complete suite of tools for seamless integration:
 
-1. **Python SDK ([`pip install nra==1.0.3`](https://pypi.org/project/nra/1.0.3/)):** Integration into PyTorch and TensorFlow.
-2. **NRA CLI (`cargo install nra-cli`):** Console utility for servers. Allows unpacking, packing, and streaming files directly from the terminal.
+1. **Python SDK ([`pip install nra`](https://pypi.org/project/nra/)):** Integration into PyTorch and TensorFlow.
+2. **NRA CLI (`cargo install nra-cli`):** Console utility for servers. Allows unpacking, packing, streaming, and **verifying** archives directly from the terminal.
 3. **NRA GUI:** An elegant desktop application (Windows/Mac/Linux) for visual archive management. *(Currently in development: [zevatov/nra-manager-pro](https://github.com/zevatov/nra-manager-pro))*
 4. **FUSE Mount:** Mount `.nra` archives like standard virtual USB drives directly into your filesystem (`nra-cli mount`).
-5. **🤗 Hugging Face Dataset:** [zevatov/nra-cifar10](https://huggingface.co/datasets/zevatov/nra-cifar10) — a ready-to-use NRA-formatted dataset for instant cloud training.
+5. **🤗 Hugging Face Benchmarks:** [zevatov/nra-benchmarks](https://huggingface.co/datasets/zevatov/nra-benchmarks) — ready-to-use NRA-formatted datasets (Food-101, Wikitext, Pokemon, Minds14, GPT-2) for instant cloud training.
 
 ---
 
@@ -187,12 +185,12 @@ We built a complete suite of tools for seamless integration:
 |-----------|--------|-------------|
 | **1.0** Core Engine | ✅ Released | NRA Format Spec v4.5: Solid-block Zstd/LZ4 compression, B+ Tree manifest, CDC deduplication, AES-256-GCM encryption |
 | **1.0** Python SDK | ✅ Released | `CloudArchive` streaming, PyTorch DataLoader integration, `pip install nra` |
-| **1.0** CLI | ✅ Released | `pack`, `extract`, `convert`, `stream`, `mount` (FUSE) |
+| **1.0** CLI | ✅ Released | `pack`, `unpack`, `convert`, `stream-beta`, `mount` (FUSE), `verify-beta`, `push` |
+| **1.0** Delta Updates | ✅ Released | `nra-cli append` — append new data to existing `.nra` archives without full rebuild |
+| **1.0** NRA Registry | ✅ Released | Private self-hosted registry server (`nra-registry-server`) + `nra-cli push` for team dataset management |
 | **1.1** NRA Manager Pro | 🔧 In Progress | Cross-platform GUI application (Windows/Mac/Linux) with drag-and-drop archive management |
-| **1.2** Delta Updates | 📋 Planned | Append new data to existing `.nra` archives without full rebuild |
-| **1.3** Managed NRA CDN | 📋 Planned | Edge-caching proxy for enterprise data centers — zero-latency serving |
-| **1.4** NRA Registry | 📋 Planned | Private self-hosted registry server for team dataset management (like Docker Hub for data) |
-| **1.5** Streaming Converter | 📋 Planned | Live conversion of remote `tar.gz`/`zip` datasets to NRA on-the-fly without intermediate storage |
+| **1.2** Managed NRA CDN | 📋 Planned | Edge-caching proxy for enterprise data centers — zero-latency serving |
+| **1.3** Streaming Converter | 📋 Planned | Live conversion of remote `tar.gz`/`zip` datasets to NRA on-the-fly without intermediate storage |
 | **2.0** Multi-platform Wheels | 📋 Planned | Pre-built wheels for Linux/Windows/Mac on PyPI (no Rust toolchain required to install) |
 
 ---
@@ -205,7 +203,8 @@ Interested in the underlying architecture? Explore our detailed reports:
 - 📄 **[Technical Whitepaper (RU)](docs/nra_whitepaper_ru.md)** — Полная русская версия с детальным анализом.
 - 📊 **[General Archiving Report](docs/GENERAL_ARCHIVING_REPORT_RU.md)** — How NRA destroys ZIP, 7z, and RAR in everyday tasks and server backups.
 - 🛠 **[Developer Guide](docs/NRA_DEVELOPER_GUIDE_RU.md)** — For contributors: Content-Defined Chunking (CDC), Solid-block architecture, FUSE mount internals.
-- 🤗 **[HuggingFace Dataset Card Template](docs/HUGGINGFACE_DATASET_README.md)** — Template for hosting your own datasets on Hugging Face in NRA format.
+- 🤗 **[HuggingFace: Food-101 Card](docs/HF_README_FOOD101.md)** — Dataset card for the Food-101 NRA benchmark.
+- 🤗 **[HuggingFace: CIFAR-10 Card](docs/HF_README_CIFAR10.md)** — Dataset card for the CIFAR-10 NRA demo.
 
 ## License
 The `nra-core`, `nra-cli`, and `nra-python` components are distributed under the **MIT** license.

@@ -70,6 +70,17 @@ impl BetaReader {
 
         let file_id_cache: Vec<String> = manifest.files.iter().map(|f| f.id.clone()).collect();
 
+        // Sanity check: manifest summary must match actual file count
+        if manifest.summary.total_files != manifest.files.len() as u64 {
+            return Err(io::Error::new(
+                io::ErrorKind::InvalidData,
+                format!(
+                    "Manifest integrity error: summary claims {} files, but manifest contains {} file records",
+                    manifest.summary.total_files, manifest.files.len()
+                ),
+            ));
+        }
+
         Ok(Self {
             mmap,
             header,

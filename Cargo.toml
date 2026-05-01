@@ -1,6 +1,5 @@
 [workspace]
 members = [
-    "nra-spec",
     "nra-core",
     "nra-cli",
     "nra-python",
