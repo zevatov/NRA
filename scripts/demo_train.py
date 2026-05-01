@@ -10,7 +10,7 @@ YELLOW = "\033[33m"
 MAGENTA = "\033[35m"
 RESET = "\033[0m"
 
-def typ(text, delay=0.025):
+def typ(text, delay=0.01):
     for ch in text:
         sys.stdout.write(ch); sys.stdout.flush(); time.sleep(delay)
     print()

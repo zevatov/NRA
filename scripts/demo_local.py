@@ -10,7 +10,7 @@ YELLOW = "\033[33m"
 RESET = "\033[0m"
 NRA_CLI = "/Users/stanislav/Desktop/NAP/nra/target/release/nra-cli"
 
-def typ(text, delay=0.025):
+def typ(text, delay=0.01):
     for ch in text:
         sys.stdout.write(ch); sys.stdout.flush(); time.sleep(delay)
     print()
