@@ -11,7 +11,7 @@ TEXT_COLOR = "#E6EDF3"
 ACCENT_PURPLE = "#A371F7" # Bright Purple for NRA
 DARK_PURPLE = "#6E40C9"   # Darker Purple for border
 MUTED_GREY = "#8B949E"    # Grey for legacy formats
-GRID_COLOR = "#30363D"
+GRID_COLOR = "#484F58"    # Brighter Grey for grid lines
 
 mpl.rcParams['text.color'] = TEXT_COLOR
 mpl.rcParams['axes.labelcolor'] = TEXT_COLOR
@@ -90,9 +90,9 @@ def create_radar_chart(lang="en", animated=True):
     fills = {}
     
     for name in data:
-        lines[name], = ax.plot([], [], linewidth=linewidths[name], linestyle=styles[name], color=colors[name], label=name)
+        lines[name], = ax.plot([], [], linewidth=linewidths[name], linestyle=styles[name], color=colors[name], label=name, zorder=5)
         if name == 'NRA v4.5':
-            fills[name] = ax.fill([], [], color=colors[name], alpha=0.3)[0]
+            fills[name] = ax.fill([], [], color=colors[name], alpha=0.3, zorder=0)[0]
 
     ax.set_xticks(angles[:-1])
     ax.set_xticklabels(categories, color=TEXT_COLOR, size=12)
@@ -102,7 +102,7 @@ def create_radar_chart(lang="en", animated=True):
     ax.set_ylim(0, 5)
     
     ax.spines['polar'].set_color(GRID_COLOR)
-    ax.grid(color=GRID_COLOR, linestyle='--', alpha=0.5, zorder=10)
+    ax.grid(color=GRID_COLOR, linestyle='--', alpha=0.7, zorder=2)
     ax.set_axisbelow(False) # Draw grid lines on top of patches
     
     title = 'NRA vs Legacy Formats' if lang == "en" else 'NRA против устаревших форматов'
