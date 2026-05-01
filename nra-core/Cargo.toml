@@ -10,11 +10,9 @@ default = []
 fuse = ["dep:fuser", "dep:libc"]
 
 [dependencies]
-nra-spec = { path = "../nra-spec" }
 zstd.workspace = true
 sha2.workspace = true
 crc32fast.workspace = true
-monoio.workspace = true
 anyhow.workspace = true
 serde.workspace = true
 serde_json.workspace = true

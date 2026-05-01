@@ -70,6 +70,17 @@ impl BetaReader {
 
         let file_id_cache: Vec<String> = manifest.files.iter().map(|f| f.id.clone()).collect();
 
+        // Sanity check: manifest summary must match actual file count
+        if manifest.summary.total_files != manifest.files.len() as u64 {
+            return Err(io::Error::new(
+                io::ErrorKind::InvalidData,
+                format!(
+                    "Manifest integrity error: summary claims {} files, but manifest contains {} file records",
+                    manifest.summary.total_files, manifest.files.len()
+                ),
+            ));
+        }
+
         Ok(Self {
             mmap,
             header,
@@ -106,6 +117,7 @@ impl BetaReader {
     }
 
     /// Read and reconstruct a file from its chunk recipe.
+    #[must_use = "The read data should be used"]
     pub fn read_file(&mut self, file_id: &str) -> io::Result<Vec<u8>> {
         let file_record = self
             .manifest
