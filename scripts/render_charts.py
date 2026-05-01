@@ -102,7 +102,8 @@ def create_radar_chart(lang="en", animated=True):
     ax.set_ylim(0, 5)
     
     ax.spines['polar'].set_color(GRID_COLOR)
-    ax.grid(color=GRID_COLOR, linestyle='--', alpha=0.5)
+    ax.grid(color=GRID_COLOR, linestyle='--', alpha=0.5, zorder=10)
+    ax.set_axisbelow(False) # Draw grid lines on top of patches
     
     title = 'NRA vs Legacy Formats' if lang == "en" else 'NRA против устаревших форматов'
     plt.title(title, size=20, color=TEXT_COLOR, y=1.1, fontweight='bold')
@@ -200,6 +201,10 @@ def create_bar_chart(lang="en", animated=True):
     bars_unpack = ax1.barh(y_pos + 0.35, [0]*len(formats), height=0.35, align='center', color=GRID_COLOR, label='Unpacking')
     bars_size = ax2.barh(y_pos, [0]*len(formats), height=0.6, align='center', color=MUTED_GREY)
     
+    texts_pack = [ax1.text(0, y_pos[i], "", va='center', color=ACCENT_PURPLE if formats[i]=='NRA' else MUTED_GREY, fontweight='bold') for i in range(len(formats))]
+    texts_unpack = [ax1.text(0, y_pos[i] + 0.35, "", va='center', color=DARK_PURPLE if formats[i]=='NRA' else MUTED_GREY, fontweight='bold', fontsize=10) for i in range(len(formats))]
+    texts_size = [ax2.text(0, y_pos[i], "", va='center', color=ACCENT_PURPLE if formats[i]=='NRA' else MUTED_GREY, fontweight='bold') for i in range(len(formats))]
+
     for i in range(len(formats)):
         if formats[i] == 'NRA':
             bars_pack[i].set_color(ACCENT_PURPLE)
@@ -228,11 +233,25 @@ def create_bar_chart(lang="en", animated=True):
                 else:
                     prog = ease_out_cubic((frame - start_f) / frames_per_format)
                 
-                bars_pack[i].set_width(pack_time[i] * prog)
-                bars_unpack[i].set_width(unpack_time[i] * prog)
-                bars_size[i].set_width(sizes[i] * prog)
+                cur_pack = pack_time[i] * prog
+                cur_unpack = unpack_time[i] * prog
+                cur_size = sizes[i] * prog
                 
-            return list(bars_pack) + list(bars_unpack) + list(bars_size)
+                bars_pack[i].set_width(cur_pack)
+                bars_unpack[i].set_width(cur_unpack)
+                bars_size[i].set_width(cur_size)
+                
+                if cur_pack > 0.5:
+                    texts_pack[i].set_position((cur_pack + 2, y_pos[i]))
+                    texts_pack[i].set_text(f"{cur_pack:.1f}s")
+                if cur_unpack > 0.5:
+                    texts_unpack[i].set_position((cur_unpack + 2, y_pos[i] + 0.35))
+                    texts_unpack[i].set_text(f"{cur_unpack:.1f}s")
+                if cur_size > 0.5:
+                    texts_size[i].set_position((cur_size + 5, y_pos[i]))
+                    texts_size[i].set_text(f"{int(cur_size)}MB")
+                
+            return list(bars_pack) + list(bars_unpack) + list(bars_size) + texts_pack + texts_unpack + texts_size
 
         out_path = f"../docs/assets/archiver_benchmark{suffix}.gif"
         anim = FuncAnimation(fig, update, frames=total_anim_frames + PAUSE_FRAMES, interval=1000/FPS, blit=False)
@@ -242,6 +261,13 @@ def create_bar_chart(lang="en", animated=True):
             bars_pack[i].set_width(pack_time[i])
             bars_unpack[i].set_width(unpack_time[i])
             bars_size[i].set_width(sizes[i])
+            texts_pack[i].set_position((pack_time[i] + 2, y_pos[i]))
+            texts_pack[i].set_text(f"{pack_time[i]:.1f}s")
+            if unpack_time[i] > 0:
+                texts_unpack[i].set_position((unpack_time[i] + 2, y_pos[i] + 0.35))
+                texts_unpack[i].set_text(f"{unpack_time[i]:.1f}s")
+            texts_size[i].set_position((sizes[i] + 5, y_pos[i]))
+            texts_size[i].set_text(f"{int(sizes[i])}MB")
             
         out_path = f"../docs/assets/archiver_benchmark{suffix}.png"
         plt.tight_layout()
