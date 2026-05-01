@@ -36,7 +36,7 @@
 NRA выжимает 100% из всех ядер вашего процессора (благодаря Rust Rayon) и склеивает файлы в 4-мегабайтные Solid-блоки, обеспечивая мгновенный случайный доступ O(1).
 
 <div align="center">
-  <img src="docs/assets/archiver_benchmark_ru.png" alt="Archiver Benchmark" width="800"/>
+  <img src="docs/assets/archiver_benchmark_ru.gif" alt="Archiver Benchmark" width="800"/>
 </div>
 
 ---
@@ -46,7 +46,7 @@ NRA выжимает 100% из всех ядер вашего процессор
 NRA v4.5 — **единственный** формат, который набирает максимум по **всем** техническим параметрам: Cloud Streaming, Random Access, PyTorch Integration, Шифрование, Дедупликация и Отказоустойчивость.
 
 <div align="center">
-  <img src="docs/assets/radar_ru.png" alt="Competitive Radar" width="700"/>
+  <img src="docs/assets/radar_ru.gif" alt="Competitive Radar" width="700"/>
 </div>
 
 > **Подробнее:** [Полный Технический Whitepaper](docs/nra_whitepaper_ru.md) с 8 графиками бенчмарков.

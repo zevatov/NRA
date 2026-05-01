@@ -54,7 +54,7 @@ We ran a stress test on 60,000 small files (CIFAR-10) on Mac OS:
 NRA extracts 100% of your CPU's multi-core power (thanks to Rust Rayon) and glues files into 4MB Solid blocks, guaranteeing instant O(1) random access.
 
 <div align="center">
-  <img src="docs/assets/archiver_benchmark_en.png" alt="Archiver Benchmark" width="800"/>
+  <img src="docs/assets/archiver_benchmark_en.gif" alt="Archiver Benchmark" width="800"/>
 </div>
 
 ---
@@ -64,7 +64,7 @@ NRA extracts 100% of your CPU's multi-core power (thanks to Rust Rayon) and glue
 NRA v4.5 is the **only** format that scores maximum across **all** technical parameters — Cloud Streaming, Random Access, PyTorch Integration, Encryption, Deduplication, and Fault Tolerance.
 
 <div align="center">
-  <img src="docs/assets/radar_en.png" alt="Competitive Radar" width="700"/>
+  <img src="docs/assets/radar_en.gif" alt="Competitive Radar" width="700"/>
 </div>
 
 > **Read more:** [Full Technical Whitepaper](docs/nra_whitepaper.md) with 8 benchmark charts.
