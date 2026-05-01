@@ -11,6 +11,10 @@
   [![HuggingFace](https://img.shields.io/badge/🤗_HuggingFace-Datasets-yellow)](https://huggingface.co/datasets/zevatov/nra-benchmarks)
 </div>
 
+<div align="center">
+  <img src="docs/assets/demo.gif" alt="NRA Cloud Streaming Demo" width="800"/>
+</div>
+
 ```python
 import nra
 
@@ -69,6 +73,10 @@ NRA v4.5 is the **only** format that scores maximum across **all** technical par
 
 ## 🚀 Try It Now: Zero-Download Training
 
+<div align="center">
+  <img src="docs/assets/demo_train.gif" alt="PyTorch Training from Cloud" width="800"/>
+</div>
+
 ### Stream a 5 GB dataset from Hugging Face
 
 ```bash
@@ -113,6 +121,10 @@ for batch in loader:
 > 🤗 **All benchmark datasets on Hugging Face:** [**zevatov/nra-benchmarks**](https://huggingface.co/datasets/zevatov/nra-benchmarks) — Food-101, Wikitext, Pokemon, Minds14, GPT-2 weights, Synthetic
 
 ### Option 2: Convert ANY existing dataset on-the-fly
+
+<div align="center">
+  <img src="docs/assets/demo_convert.gif" alt="Convert tar.gz to NRA" width="800"/>
+</div>
 
 Already have a `tar.gz` or `zip` dataset on Hugging Face (or S3)? NRA can **convert it live** and stream the result — still faster than downloading the original:
 
