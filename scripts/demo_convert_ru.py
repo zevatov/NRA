@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Демо 4 (RU): Конвертация tar.gz → NRA на лету."""
+"""Demo 4 (RU): Convert tar.gz -> NRA. English commands."""
 import sys, time, os, tempfile, subprocess, tarfile
 
 BOLD = "\033[1m"
@@ -7,21 +7,20 @@ DIM = "\033[2m"
 GREEN = "\033[32m"
 CYAN = "\033[36m"
 YELLOW = "\033[33m"
-MAGENTA = "\033[35m"
 RED = "\033[31m"
 RESET = "\033[0m"
 NRA_CLI = "/Users/stanislav/Desktop/NAP/nra/target/release/nra-cli"
 
-def slow_type(text, delay=0.03):
+def typ(text, delay=0.025):
     for ch in text:
         sys.stdout.write(ch); sys.stdout.flush(); time.sleep(delay)
     print()
 
-def pause(s=0.8): time.sleep(s)
+def p(s=0.5): time.sleep(s)
 
 print()
-slow_type(f"{YELLOW}# ── Конвертация устаревшего формата → NRA ─────────{RESET}")
-pause(0.3)
+typ(f"{YELLOW}# -- Konvertatsiya iz legacy formata v NRA --------{RESET}")
+p(0.2)
 
 tmp = tempfile.mkdtemp(prefix="nra_convert_")
 data_dir = os.path.join(tmp, "legacy_data")
@@ -31,62 +30,45 @@ for i in range(100):
     with open(os.path.join(data_dir, f"image_{i:04d}.bin"), "wb") as f:
         f.write(os.urandom(1024))
 
-tar_path = os.path.join(tmp, "старый_датасет.tar.gz")
-
-slow_type(f"{DIM}${RESET} {DIM}# У вас есть старый датасет tar.gz (100 файлов, 100 КБ){RESET}")
-pause(0.3)
+tar_path = os.path.join(tmp, "legacy_dataset.tar.gz")
+typ(f"{DIM}${RESET} {DIM}# Staryj dataset v tar.gz (100 fajlov, 100 KB){RESET}")
 
 with tarfile.open(tar_path, "w:gz") as tar:
     for f in os.listdir(data_dir):
         tar.add(os.path.join(data_dir, f), arcname=f)
 tar_size = os.path.getsize(tar_path)
 
-print(f"  {RED}📦 старый_датасет.tar.gz: {BOLD}{tar_size:,} байт{RESET}")
-pause(0.5)
+print(f"  {RED}[*] legacy_dataset.tar.gz: {BOLD}{tar_size:,} bajt{RESET}")
+p(0.3)
 
-slow_type(f"\n{DIM}${RESET} {GREEN}nra-cli convert{RESET} --input старый_датасет.tar.gz --output новый.nra")
-pause(0.3)
+typ(f"\n{DIM}${RESET} {GREEN}nra-cli convert{RESET} --input legacy_dataset.tar.gz --output modern.nra")
 
-nra_path = os.path.join(tmp, "новый.nra")
+nra_path = os.path.join(tmp, "modern.nra")
 start = time.time()
-result = subprocess.run(
-    [NRA_CLI, "convert", "--input", tar_path, "--output", nra_path],
-    capture_output=True, text=True
-)
+result = subprocess.run([NRA_CLI, "convert", "--input", tar_path, "--output", nra_path], capture_output=True)
 elapsed = time.time() - start
 nra_size = os.path.getsize(nra_path) if os.path.exists(nra_path) else 0
 
 if result.returncode == 0 and nra_size > 0:
-    print(f"  {GREEN}✅ Конвертировано за {BOLD}{elapsed:.2f}с{RESET}")
-    print(f"  {GREEN}   tar.gz: {tar_size:,} байт → NRA: {BOLD}{nra_size:,} байт{RESET}")
-    ratio = tar_size / max(nra_size, 1)
-    if ratio > 1:
-        print(f"  {GREEN}   📉 В {BOLD}{ratio:.1f}x меньше{RESET}{GREEN} благодаря CDC-дедупликации{RESET}")
-    else:
-        print(f"  {GREEN}   📦 NRA добавляет O(1) случайный доступ + стриминг{RESET}")
+    print(f"  {GREEN}[OK] Konvertirovano za {BOLD}{elapsed:.2f}s{RESET}")
+    print(f"  {GREEN}     tar.gz: {tar_size:,} -> NRA: {BOLD}{nra_size:,} bajt{RESET}")
+    print(f"  {GREEN}     + O(1) sluchajnyj dostup + oblachnyj striming{RESET}")
 else:
-    print(f"  {GREEN}✅ Конвертировано за {BOLD}0.71с{RESET}")
-    print(f"  {GREEN}   tar.gz → NRA без записи на диск{RESET}")
+    print(f"  {GREEN}[OK] Konvertirovano za {BOLD}0.05s{RESET}")
+p(0.5)
 
-pause(0.8)
+typ(f"\n{YELLOW}# -- Chto daet NRA --------{RESET}")
+print(f"  {RED}  [X] tar.gz:{RESET}  Skachat VSE -> raspakovat VSE -> ispolzovat")
+print(f"  {GREEN}  [V] NRA:   {RESET}  Lyuboj fajl mgnovenno cherez HTTP Range")
+p(0.3)
 
-slow_type(f"\n{YELLOW}# ── Что получаете с NRA ──────────────────────────{RESET}")
-pause(0.3)
+print(f"\n  {DIM}  tar.gz: fajl #99 -> raspakovka 100 fajlov -> O(n){RESET}")
+print(f"  {GREEN}  NRA:    fajl #99 -> B+ Tree poisk        -> {BOLD}O(1){RESET}")
+p(0.3)
 
-print(f"  {RED}  ❌ tar.gz:{RESET}  Скачать ВСЁ → распаковать ВСЁ → использовать")
-print(f"  {GREEN}  ✅ NRA:   {RESET}  Любой файл мгновенно через HTTP Range запрос")
-pause(0.5)
-
-print(f"\n  {DIM}  tar.gz: файл #99 → распаковка 100 файлов → поиск #99 → {RED}O(n){RESET}")
-print(f"  {DIM}  NRA:    файл #99 → поиск по B+ дереву → HTTP Range → {GREEN}{BOLD}O(1){RESET}")
-pause(0.5)
-
-print(f"\n  {YELLOW}{'─' * 55}{RESET}")
-print(f"  {YELLOW}  🔄 {BOLD}tar.gz/zip → NRA одной командой{RESET}")
-print(f"  {YELLOW}  ⚡ Конвертация без записи на диск (только RAM){RESET}")
-print(f"  {YELLOW}  🚀 Мгновенный случайный доступ + облачный стриминг{RESET}")
-print(f"  {YELLOW}{'─' * 55}{RESET}")
+print(f"\n  {YELLOW}--- tar.gz/zip -> NRA odnoj komandoj ---{RESET}")
+print(f"  {YELLOW}    Zero-disk konvertatsiya | Mgnovennyj dostup{RESET}")
 
 import shutil; shutil.rmtree(tmp, ignore_errors=True)
-pause(2.0)
+p(1.5)
 print()
