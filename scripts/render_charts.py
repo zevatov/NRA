@@ -244,7 +244,10 @@ def create_bar_chart(lang="en", animated=True):
                 if cur_pack > 0.5:
                     texts_pack[i].set_position((cur_pack + 2, y_pos[i]))
                     texts_pack[i].set_text(f"{cur_pack:.1f}s")
-                if cur_unpack > 0.5:
+                if unpack_time[i] == 0.0 and prog > 0.5:
+                    texts_unpack[i].set_position((2, y_pos[i] + 0.35))
+                    texts_unpack[i].set_text("0.0s (Zero-Disk)")
+                elif cur_unpack > 0.5:
                     texts_unpack[i].set_position((cur_unpack + 2, y_pos[i] + 0.35))
                     texts_unpack[i].set_text(f"{cur_unpack:.1f}s")
                 if cur_size > 0.5:
@@ -263,7 +266,10 @@ def create_bar_chart(lang="en", animated=True):
             bars_size[i].set_width(sizes[i])
             texts_pack[i].set_position((pack_time[i] + 2, y_pos[i]))
             texts_pack[i].set_text(f"{pack_time[i]:.1f}s")
-            if unpack_time[i] > 0:
+            if unpack_time[i] == 0.0:
+                texts_unpack[i].set_position((2, y_pos[i] + 0.35))
+                texts_unpack[i].set_text("0.0s (Zero-Disk)")
+            elif unpack_time[i] > 0:
                 texts_unpack[i].set_position((unpack_time[i] + 2, y_pos[i] + 0.35))
                 texts_unpack[i].set_text(f"{unpack_time[i]:.1f}s")
             texts_size[i].set_position((sizes[i] + 5, y_pos[i]))
