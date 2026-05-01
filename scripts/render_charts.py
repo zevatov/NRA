@@ -21,156 +21,229 @@ mpl.rcParams['font.family'] = 'sans-serif'
 mpl.rcParams['font.sans-serif'] = ['JetBrains Mono', 'Fira Code', 'Inter', 'Roboto', 'Arial']
 
 # Set animation params
-FRAMES = 60
 FPS = 30
+PAUSE_FRAMES = 150 # 5 seconds pause at the end
 
-def create_bar_chart(lang="en", animated=True):
-    fig, ax = plt.subplots(figsize=(10, 6), facecolor=BG_COLOR)
+def ease_out_cubic(x):
+    return 1 - (1 - x)**3
+
+def create_radar_chart(lang="en", animated=True):
+    categories = ['Cloud Streaming', 'Random Access', 'Storage Efficiency', 'Simplicity', 'Data Universality', 
+                  'Fault Tolerance', 'Encryption (AES)', 'Delta Updates', 'PyTorch Integration']
+    if lang == "ru":
+        categories = ['Cloud Streaming', 'Random Access', 'Storage Efficiency', 'Simplicity', 'Data Universality', 
+                      'Fault Tolerance', 'Encryption (AES)', 'Delta Updates', 'PyTorch Integration']
+                      
+    N = len(categories)
+    
+    # Values from 1 to 5
+    data = {
+        'NRA v4.5':           np.array([4, 5, 5, 3, 5, 4, 5, 5, 5]),
+        'WebDataset':         np.array([3, 1, 1, 3, 4, 3, 1, 1, 5]),
+        'TFRecord / Parquet': np.array([1, 2, 3, 2, 2, 3, 2, 3, 4]),
+        'Tar.gz':             np.array([1, 1, 4, 4, 5, 1, 1, 1, 2]),
+        'Classic Tar':        np.array([1, 1, 1, 4, 5, 1, 1, 1, 2]),
+        'Raw Disk / S3':      np.array([1, 5, 1, 5, 5, 3, 1, 5, 3])
+    }
+    
+    colors = {
+        'NRA v4.5': ACCENT_PURPLE,
+        'WebDataset': '#D29922', # Orange/Yellowish
+        'TFRecord / Parquet': '#238636', # Green
+        'Tar.gz': '#58A6FF', # Blue
+        'Classic Tar': '#F85149', # Red
+        'Raw Disk / S3': MUTED_GREY
+    }
+    
+    styles = {
+        'NRA v4.5': 'solid',
+        'WebDataset': 'dashed',
+        'TFRecord / Parquet': 'dashdot',
+        'Tar.gz': 'dotted',
+        'Classic Tar': 'dotted',
+        'Raw Disk / S3': 'solid'
+    }
+    
+    linewidths = {
+        'NRA v4.5': 3.0,
+        'WebDataset': 1.5,
+        'TFRecord / Parquet': 1.5,
+        'Tar.gz': 1.5,
+        'Classic Tar': 1.5,
+        'Raw Disk / S3': 1.5
+    }
+
+    angles = [n / float(N) * 2 * np.pi for n in range(N)]
+    angles += angles[:1] # close the loop
+    
+    for key in data:
+        data[key] = np.append(data[key], data[key][0])
+        
+    fig, ax = plt.subplots(figsize=(12, 12), subplot_kw=dict(polar=True), facecolor=BG_COLOR)
     fig.patch.set_facecolor(BG_COLOR)
     ax.set_facecolor(BG_COLOR)
     
-    formats = ['NRA', 'ZIP', 'Tar.gz']
-    packing_times = np.array([3.3, 13.4, 38.0])
-    y_pos = np.arange(len(formats))
+    # Add padding to labels so they don't overlap
+    ax.tick_params(pad=30)
     
-    # Initialize empty bars if animated, full bars if static
-    initial_times = [0]*len(formats) if animated else packing_times
-    glow_bars = ax.barh(y_pos, initial_times, alpha=0.3, height=0.6, linewidth=0)
-    main_bars = ax.barh(y_pos, initial_times, height=0.4, linewidth=1.5)
+    lines = {}
+    fills = {}
     
-    # Setup styling
-    for i in range(len(formats)):
-        color = ACCENT_PURPLE if i == 0 else GRID_COLOR
-        edge = DARK_PURPLE if i == 0 else 'none'
-        
-        glow_bars[i].set_color(color)
-        main_bars[i].set_color(color)
-        main_bars[i].set_edgecolor(edge)
-        
-    ax.set_yticks(y_pos)
-    labels = ax.set_yticklabels([f"{f}" for i, f in enumerate(formats)], fontweight='bold', fontsize=12)
-    for i, label in enumerate(labels):
-        label.set_color(ACCENT_PURPLE if formats[i] == 'NRA' else MUTED_GREY)
-        
-    ax.invert_yaxis()
-    ax.set_xlim(0, 40)
+    for name in data:
+        lines[name], = ax.plot([], [], linewidth=linewidths[name], linestyle=styles[name], color=colors[name], label=name)
+        if name == 'NRA v4.5':
+            fills[name] = ax.fill([], [], color=colors[name], alpha=0.3)[0]
+
+    ax.set_xticks(angles[:-1])
+    ax.set_xticklabels(categories, color=TEXT_COLOR, size=12)
     
-    title = 'Packing Time (60,000 files)' if lang == "en" else 'Время упаковки (60,000 файлов)'
-    ax.set_title(title, pad=20, fontsize=16, fontweight='bold', color=TEXT_COLOR)
+    ax.set_yticks([1, 2, 3, 4, 5])
+    ax.set_yticklabels(['1', '2', '3', '4', '5'], color=GRID_COLOR)
+    ax.set_ylim(0, 5)
     
-    ax.spines['top'].set_visible(False)
-    ax.spines['right'].set_visible(False)
-    ax.spines['left'].set_color(GRID_COLOR)
-    ax.spines['bottom'].set_color(GRID_COLOR)
-    ax.grid(axis='x', color=GRID_COLOR, linestyle='--', alpha=0.7)
+    ax.spines['polar'].set_color(GRID_COLOR)
+    ax.grid(color=GRID_COLOR, linestyle='--', alpha=0.5)
     
-    # Texts
-    texts = [ax.text(packing_times[i] + 0.5 if not animated else 0, y_pos[i], f"{packing_times[i]}s" if not animated else "", va='center', color=ACCENT_PURPLE if i==0 else MUTED_GREY, fontweight='bold') for i in range(len(formats))]
+    title = 'NRA vs Legacy Formats' if lang == "en" else 'NRA против устаревших форматов'
+    plt.title(title, size=20, color=TEXT_COLOR, y=1.1, fontweight='bold')
+    
+    legend = ax.legend(loc='upper right', bbox_to_anchor=(0.1, 0.1), facecolor=PANEL_COLOR, edgecolor=GRID_COLOR, fontsize=11)
+    for text in legend.get_texts():
+        if text.get_text() == 'NRA v4.5':
+            text.set_color(ACCENT_PURPLE)
+            text.set_fontweight('bold')
+        else:
+            text.set_color(MUTED_GREY)
 
     suffix = "" if lang == "en" else "_ru"
-    
-    if animated:
-        def update(frame):
-            progress = 1 - (1 - frame/FRAMES)**3
-            current_times = packing_times * progress
-            
-            for i in range(len(formats)):
-                glow_bars[i].set_width(current_times[i])
-                main_bars[i].set_width(current_times[i])
-                if current_times[i] > 0.5:
-                    texts[i].set_position((current_times[i] + 0.5, y_pos[i]))
-                    texts[i].set_text(f"{current_times[i]:.1f}s")
-                    
-            return list(glow_bars) + list(main_bars) + texts
 
-        out_path = f"../docs/assets/archiver_benchmark{suffix}.gif"
-        anim = FuncAnimation(fig, update, frames=FRAMES + 15, interval=1000/FPS, blit=False)
+    if animated:
+        # Sequence:
+        # NRA (0-30), WebDataset (30-60), Parquet (60-90), Tar.gz (90-120), Tar (120-150), Raw (150-180)
+        frames_per_format = 30
+        format_keys = list(data.keys())
+        total_anim_frames = frames_per_format * len(format_keys)
+        
+        def update(frame):
+            for i, name in enumerate(format_keys):
+                start_f = i * frames_per_format
+                end_f = start_f + frames_per_format
+                
+                if frame < start_f:
+                    prog = 0
+                elif frame > end_f:
+                    prog = 1
+                else:
+                    prog = ease_out_cubic((frame - start_f) / frames_per_format)
+                
+                if prog > 0:
+                    c_vals = data[name] * prog
+                    lines[name].set_data(angles, c_vals)
+                    if name == 'NRA v4.5':
+                        fills[name].set_xy(np.column_stack((angles, c_vals)))
+            
+            return list(lines.values()) + list(fills.values())
+
+        out_path = f"../docs/assets/radar{suffix}.gif"
+        anim = FuncAnimation(fig, update, frames=total_anim_frames + PAUSE_FRAMES, interval=1000/FPS, blit=False)
         anim.save(out_path, writer=PillowWriter(fps=FPS))
     else:
-        out_path = f"../docs/assets/archiver_benchmark{suffix}.png"
+        for name in data:
+            lines[name].set_data(angles, data[name])
+            if name == 'NRA v4.5':
+                fills[name].set_xy(np.column_stack((angles, data[name])))
+                
+        out_path = f"../docs/assets/radar{suffix}.png"
         plt.tight_layout()
         plt.savefig(out_path, dpi=300, facecolor=BG_COLOR, bbox_inches='tight', transparent=False)
         
     plt.close()
 
-
-def create_radar_chart(lang="en", animated=True):
-    categories = ['Cloud Streaming', 'Random Access', 'PyTorch Native', 'Deduplication', 'Encryption', 'Fault Tolerance']
-    if lang == "ru":
-        categories = ['Cloud Streaming', 'Случайный доступ', 'PyTorch Native', 'Дедупликация', 'Шифрование', 'Отказоустойчивость']
-        
-    N = len(categories)
-    
-    nra_vals = np.array([10, 10, 10, 9, 10, 9])
-    tar_vals = np.array([0, 1, 3, 0, 0, 5])
-    webdataset = np.array([8, 2, 9, 0, 0, 6])
-    
-    angles = [n / float(N) * 2 * np.pi for n in range(N)]
-    
-    nra_vals = np.append(nra_vals, nra_vals[0])
-    tar_vals = np.append(tar_vals, tar_vals[0])
-    webdataset = np.append(webdataset, webdataset[0])
-    angles += angles[:1]
-    
-    fig, ax = plt.subplots(figsize=(8, 8), subplot_kw=dict(polar=True), facecolor=BG_COLOR)
+def create_bar_chart(lang="en", animated=True):
+    # Two subplots: Time and Size
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 6), facecolor=BG_COLOR)
     fig.patch.set_facecolor(BG_COLOR)
-    ax.set_facecolor(BG_COLOR)
     
-    ini_nra = nra_vals if not animated else np.zeros_like(nra_vals)
-    ini_tar = tar_vals if not animated else np.zeros_like(tar_vals)
-    ini_wd = webdataset if not animated else np.zeros_like(webdataset)
+    formats = ['NRA', 'TAR', 'TAR.GZ', 'ZIP', '7Z', 'RAR']
     
-    line_nra, = ax.plot(angles if not animated else [], ini_nra if not animated else [], linewidth=2, linestyle='solid', color=ACCENT_PURPLE, label='NRA v4.5')
-    if animated:
-        fill_nra = ax.fill([], [], color=ACCENT_PURPLE, alpha=0.4)[0]
-    else:
-        fill_nra = ax.fill(angles, ini_nra, color=ACCENT_PURPLE, alpha=0.4)[0]
+    # Approximated data based on typical archiver performance
+    pack_time = np.array([3.3, 1.5, 38.0, 13.4, 120.0, 45.0])
+    unpack_time = np.array([0.0, 1.5, 8.0, 5.0, 15.0, 10.0]) # 0 for NRA (zero-copy)
+    sizes = np.array([140, 450, 150, 160, 110, 130])
     
-    line_wd, = ax.plot(angles if not animated else [], ini_wd if not animated else [], linewidth=1.5, linestyle='dashed', color=MUTED_GREY, label='WebDataset')
-    line_tar, = ax.plot(angles if not animated else [], ini_tar if not animated else [], linewidth=1.5, linestyle='dotted', color=GRID_COLOR, label='Tar.gz')
+    y_pos = np.arange(len(formats))
     
-    ax.set_xticks(angles[:-1])
-    ax.set_xticklabels(categories, color=TEXT_COLOR, size=11)
+    for ax in (ax1, ax2):
+        ax.set_facecolor(BG_COLOR)
+        ax.set_yticks(y_pos)
+        labels = ax.set_yticklabels(formats, fontweight='bold', fontsize=12)
+        for i, label in enumerate(labels):
+            label.set_color(ACCENT_PURPLE if formats[i] == 'NRA' else MUTED_GREY)
+        ax.invert_yaxis()
+        ax.spines['top'].set_visible(False)
+        ax.spines['right'].set_visible(False)
+        ax.spines['left'].set_color(GRID_COLOR)
+        ax.spines['bottom'].set_color(GRID_COLOR)
+        ax.grid(axis='x', color=GRID_COLOR, linestyle='--', alpha=0.7)
     
-    ax.set_yticks([2, 4, 6, 8, 10])
-    ax.set_yticklabels([])
-    ax.set_ylim(0, 10)
+    title1 = 'Time (Seconds)' if lang == "en" else 'Время (Секунды)'
+    title2 = 'Archive Size (MB)' if lang == "en" else 'Размер Архива (МБ)'
     
-    ax.spines['polar'].set_color(GRID_COLOR)
-    ax.grid(color=GRID_COLOR, linestyle='--')
+    ax1.set_title(title1, pad=20, fontsize=16, fontweight='bold', color=TEXT_COLOR)
+    ax2.set_title(title2, pad=20, fontsize=16, fontweight='bold', color=TEXT_COLOR)
     
-    title = 'NRA vs Legacy Formats' if lang == "en" else 'NRA против устаревших форматов'
-    plt.title(title, size=16, color=TEXT_COLOR, y=1.1, fontweight='bold')
+    ax1.set_xlim(0, 130)
+    ax2.set_xlim(0, 500)
     
-    legend = ax.legend(loc='upper right', bbox_to_anchor=(0.1, 0.1), facecolor=PANEL_COLOR, edgecolor=GRID_COLOR)
-    texts = legend.get_texts()
-    texts[0].set_color(ACCENT_PURPLE) # NRA
-    texts[1].set_color(MUTED_GREY) # WebDataset
-    texts[2].set_color(GRID_COLOR) # Tar.gz
+    # Initialize bars
+    bars_pack = ax1.barh(y_pos, [0]*len(formats), height=0.35, align='center', color=MUTED_GREY, label='Packing')
+    bars_unpack = ax1.barh(y_pos + 0.35, [0]*len(formats), height=0.35, align='center', color=GRID_COLOR, label='Unpacking')
+    bars_size = ax2.barh(y_pos, [0]*len(formats), height=0.6, align='center', color=MUTED_GREY)
+    
+    for i in range(len(formats)):
+        if formats[i] == 'NRA':
+            bars_pack[i].set_color(ACCENT_PURPLE)
+            bars_pack[i].set_edgecolor(DARK_PURPLE)
+            bars_unpack[i].set_color(DARK_PURPLE)
+            bars_size[i].set_color(ACCENT_PURPLE)
+            bars_size[i].set_edgecolor(DARK_PURPLE)
 
+    ax1.legend(facecolor=PANEL_COLOR, edgecolor=GRID_COLOR, labelcolor=TEXT_COLOR)
+    
     suffix = "" if lang == "en" else "_ru"
 
     if animated:
+        frames_per_format = 20
+        total_anim_frames = frames_per_format * len(formats)
+        
         def update(frame):
-            progress = 1 - (1 - frame/FRAMES)**3
-            
-            c_nra = nra_vals * progress
-            c_wd = webdataset * progress
-            c_tar = tar_vals * progress
-            
-            line_nra.set_data(angles, c_nra)
-            fill_nra.set_xy(np.column_stack((angles, c_nra)))
-            
-            line_wd.set_data(angles, c_wd)
-            line_tar.set_data(angles, c_tar)
-            
-            return line_nra, fill_nra, line_wd, line_tar
+            for i in range(len(formats)):
+                start_f = i * frames_per_format
+                end_f = start_f + frames_per_format
+                
+                if frame < start_f:
+                    prog = 0
+                elif frame > end_f:
+                    prog = 1
+                else:
+                    prog = ease_out_cubic((frame - start_f) / frames_per_format)
+                
+                bars_pack[i].set_width(pack_time[i] * prog)
+                bars_unpack[i].set_width(unpack_time[i] * prog)
+                bars_size[i].set_width(sizes[i] * prog)
+                
+            return list(bars_pack) + list(bars_unpack) + list(bars_size)
 
-        out_path = f"../docs/assets/radar{suffix}.gif"
-        anim = FuncAnimation(fig, update, frames=FRAMES + 15, interval=1000/FPS, blit=False)
+        out_path = f"../docs/assets/archiver_benchmark{suffix}.gif"
+        anim = FuncAnimation(fig, update, frames=total_anim_frames + PAUSE_FRAMES, interval=1000/FPS, blit=False)
         anim.save(out_path, writer=PillowWriter(fps=FPS))
     else:
-        out_path = f"../docs/assets/radar{suffix}.png"
+        for i in range(len(formats)):
+            bars_pack[i].set_width(pack_time[i])
+            bars_unpack[i].set_width(unpack_time[i])
+            bars_size[i].set_width(sizes[i])
+            
+        out_path = f"../docs/assets/archiver_benchmark{suffix}.png"
         plt.tight_layout()
         plt.savefig(out_path, dpi=300, facecolor=BG_COLOR, bbox_inches='tight', transparent=False)
         
