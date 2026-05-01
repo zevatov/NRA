@@ -63,5 +63,5 @@ p(0.4)
 
 print(f"\n  {YELLOW}--- 5 GB dataset | {total:,} files | 0 bytes on SSD ---{RESET}")
 print(f"  {YELLOW}    Ready for PyTorch in under 1 second{RESET}")
-p(1.5)
+p(5.0)
 print()

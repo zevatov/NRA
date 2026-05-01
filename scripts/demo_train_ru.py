@@ -27,7 +27,7 @@ typ(f"{DIM}>>>{RESET} {CYAN}from{RESET} torch.utils.data {CYAN}import{RESET} Dat
 p(0.3)
 
 typ(f"\n{DIM}>>>{RESET} {CYAN}class{RESET} {YELLOW}NRADataset{RESET}(Dataset):")
-typ(f"{DIM}...{RESET}     {DIM}# Strimit izobrazheniya: Oblako -> RAM -> GPU{RESET}")
+typ(f"{DIM}...{RESET}     {DIM}# Стримит изображения: Облако -> RAM -> GPU{RESET}")
 typ(f"{DIM}...{RESET}     archive = nra.CloudArchive(url)")
 typ(f"{DIM}...{RESET}     {CYAN}def{RESET} __getitem__(self, idx):")
 typ(f"{DIM}...{RESET}         raw = self.archive.read_file(self.files[idx])")
@@ -44,30 +44,30 @@ try:
 except:
     total = 101000
 
-print(f"  {GREEN}[OK] Podklyucheno: {BOLD}{total:,}{RESET}{GREEN} izobrazhenij gotovy{RESET}")
+print(f"  {GREEN}[OK] Подключено: {BOLD}{total:,}{RESET}{GREEN} изображений готовы{RESET}")
 p(0.3)
 
 typ(f"\n{DIM}>>>{RESET} loader = DataLoader(dataset, batch_size={MAGENTA}32{RESET}, num_workers={MAGENTA}4{RESET})")
 p(0.2)
 
-typ(f"\n{DIM}>>>{RESET} {YELLOW}# Tsikl obucheniya — dannye strimyatsya v realnom vremeni{RESET}")
+typ(f"\n{DIM}>>>{RESET} {YELLOW}# Цикл обучения — данные стримятся в реальном времени{RESET}")
 typ(f"{DIM}>>>{RESET} {CYAN}for{RESET} batch {CYAN}in{RESET} loader:")
 typ(f"{DIM}...{RESET}     loss = model(batch)  {DIM}# shape: [32, 3, 224, 224]{RESET}")
 p(0.4)
 
-print(f"\n  {GREEN}  [>] Epoha 1 | batch 1: loss={BOLD}2.341{RESET}{GREEN}  {DIM}(32 izobrazheniya){RESET}")
+print(f"\n  {GREEN}  [>] Эпоха 1 | batch 1: loss={BOLD}2.341{RESET}{GREEN}  {DIM}(32 изображения){RESET}")
 p(0.3)
-print(f"  {GREEN}  [>] Epoha 1 | batch 2: loss={BOLD}2.198{RESET}{GREEN}  {DIM}(64 izobrazheniya){RESET}")
+print(f"  {GREEN}  [>] Эпоха 1 | batch 2: loss={BOLD}2.198{RESET}{GREEN}  {DIM}(64 изображения){RESET}")
 p(0.3)
-print(f"  {GREEN}  [>] Epoha 1 | batch 3: loss={BOLD}2.057{RESET}{GREEN}  {DIM}(96 izobrazhenij){RESET}")
+print(f"  {GREEN}  [>] Эпоха 1 | batch 3: loss={BOLD}2.057{RESET}{GREEN}  {DIM}(96 изображений){RESET}")
 p(0.3)
-print(f"  {GREEN}  [>] Epoha 1 | batch 4: loss={BOLD}1.923{RESET}{GREEN}  {DIM}(128 izobrazhenij){RESET}")
+print(f"  {GREEN}  [>] Эпоха 1 | batch 4: loss={BOLD}1.923{RESET}{GREEN}  {DIM}(128 изображений){RESET}")
 p(0.2)
-print(f"  {DIM}  ... (obuchenie prodolzhaetsya){RESET}")
+print(f"  {DIM}  ... (обучение продолжается){RESET}")
 p(0.4)
 
-print(f"\n  {YELLOW}--- Obuchenie na 5 GB datasete ---{RESET}")
-print(f"  {YELLOW}    Disk: 0 bajt  |  Vse dannye strimyatsya iz oblaka{RESET}")
-print(f"  {YELLOW}    Bez skachivaniya. Bez raspakovki. Prosto obuchenie.{RESET}")
-p(1.5)
+print(f"\n  {YELLOW}--- Обучение на 5 GB датасете ---{RESET}")
+print(f"  {YELLOW}    Диск: 0 байт  |  Все данные стримятся из облака{RESET}")
+print(f"  {YELLOW}    Без скачивания. Без распаковки. Просто обучение.{RESET}")
+p(5.0)
 print()

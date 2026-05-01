@@ -75,5 +75,5 @@ print(f"\n  {YELLOW}--- Full NRA Lifecycle ---{RESET}")
 print(f"  {YELLOW}    Pack -> Verify -> Unpack | All files restored perfectly{RESET}")
 
 import shutil; shutil.rmtree(tmp, ignore_errors=True)
-p(1.5)
+p(5.0)
 print()

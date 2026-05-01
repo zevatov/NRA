@@ -70,5 +70,5 @@ print(f"\n  {YELLOW}--- tar.gz/zip -> NRA in one command ---{RESET}")
 print(f"  {YELLOW}    Zero-disk conversion | Instant random access{RESET}")
 
 import shutil; shutil.rmtree(tmp, ignore_errors=True)
-p(1.5)
+p(5.0)
 print()

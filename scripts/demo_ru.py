@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Demo 1 (RU): Cloud streaming — zero download. Commands stay in English."""
+"""Demo 1 (RU): Cloud streaming — zero download. Commands stay in English, comments in Russian."""
 import sys, time
 
 BOLD = "\033[1m"
@@ -26,7 +26,7 @@ p(0.2)
 url = "https://huggingface.co/datasets/zevatov/nra-benchmarks/resolve/main/food-101.nra"
 typ(f"{DIM}>>>{RESET} archive = nra.CloudArchive({CYAN}\"{url}\"{RESET})")
 p(0.2)
-print(f"  {DIM}Podklyuchenie k HuggingFace...{RESET}")
+print(f"  {DIM}Подключение к HuggingFace...{RESET}")
 
 try:
     import nra
@@ -37,8 +37,8 @@ try:
 except:
     total = 101000; jpg_files = []
 
-print(f"  {GREEN}[OK] Podklyucheno: {BOLD}{total:,}{RESET}{GREEN} fajlov v archive{RESET}")
-print(f"  {GREEN}     Skachano na disk: {BOLD}0 bajt{RESET}")
+print(f"  {GREEN}[OK] Подключено: {BOLD}{total:,}{RESET}{GREEN} файлов в архиве{RESET}")
+print(f"  {GREEN}     Скачано на диск: {BOLD}0 байт{RESET}")
 p(0.5)
 
 typ(f"\n{DIM}>>>{RESET} data = archive.read_file({CYAN}\"images/pizza/1001116.jpg\"{RESET})")
@@ -53,15 +53,15 @@ try:
 except:
     elapsed = 0.15; size = 45291
 
-print(f"  {GREEN}[OK] {BOLD}{size:,}{RESET}{GREEN} bajt polucheno za {BOLD}{elapsed:.2f}s{RESET}")
-print(f"  {GREEN}     Mesto na diske: {BOLD}0 bajt{RESET}")
+print(f"  {GREEN}[OK] {BOLD}{size:,}{RESET}{GREEN} байт получено за {BOLD}{elapsed:.2f}s{RESET}")
+print(f"  {GREEN}     Место на диске: {BOLD}0 байт{RESET}")
 p(0.5)
 
 typ(f"\n{DIM}>>>{RESET} len(archive.file_ids())")
 print(f"  {MAGENTA}{BOLD}{total:,}{RESET}")
 p(0.4)
 
-print(f"\n  {YELLOW}--- 5 GB dataset | {total:,} fajlov | 0 bajt na SSD ---{RESET}")
-print(f"  {YELLOW}    Gotov dlya PyTorch menee chem za 1 sekundu{RESET}")
-p(1.5)
+print(f"\n  {YELLOW}--- 5 GB датасет | {total:,} файлов | 0 байт на SSD ---{RESET}")
+print(f"  {YELLOW}    Готов для PyTorch менее чем за 1 секунду{RESET}")
+p(5.0)
 print()
