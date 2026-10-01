@@ -10,6 +10,7 @@ use std::io;
 
 /// Compression codec selector.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[non_exhaustive]
 pub enum Codec {
     /// Zstd: Best compression ratio. Default for archival workloads.
     Zstd = 0x01,

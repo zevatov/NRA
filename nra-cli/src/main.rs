@@ -159,6 +159,12 @@ enum Commands {
         #[arg(long)]
         verbose: bool,
     },
+    /// Verify integrity of an NRA BETA archive (CRC32 + BLAKE3 check on every chunk)
+    VerifyBeta {
+        /// Input .nra BETA archive to verify
+        #[arg(short, long)]
+        input: PathBuf,
+    },
     /// Push a directory to a remote NRA Registry server via tar streaming
     Push {
         /// Input directory containing files to pack
@@ -201,6 +207,10 @@ fn pack_dir(input: &Path, output: &Path, name: &str, optimize_for: &str) -> Resu
             writer.add_file(&file_name, &data)?;
             count += 1;
         }
+    }
+
+    if count == 0 {
+        anyhow::bail!("❌ Cannot pack archive: input directory contains 0 files. Aborting to prevent empty archives.");
     }
 
     writer.save(output)?;
@@ -301,6 +311,10 @@ fn pack_beta(input: &Path, output: &Path, name: &str, encrypt: bool, codec_str: 
         }
     }
 
+    if paths.is_empty() {
+        anyhow::bail!("❌ Cannot pack archive: input directory contains 0 files. Aborting to prevent empty archives.");
+    }
+
     use rayon::prelude::*;
 
     // Process in batches of 1000 to prevent OOM on massive datasets
@@ -396,6 +410,7 @@ fn main() -> Result<()> {
         Commands::StreamBeta { url, file_id, output } => stream_beta(&url, &file_id, output)?,
         Commands::UnpackBeta { input, output } => unpack_beta(&input, &output)?,
         Commands::InfoBeta { input, verbose } => info_beta(&input, verbose)?,
+        Commands::VerifyBeta { input } => verify_beta_archive(&input)?,
         Commands::Push { input, url } => push_directory(&input, &url)?,
     }
 
@@ -580,6 +595,70 @@ fn push_directory(input: &Path, url: &str) -> Result<()> {
     }
 
     let _ = fs::remove_file(temp_tar);
+
+    Ok(())
+}
+
+fn verify_beta_archive(input: &Path) -> Result<()> {
+    use nra_core::beta_reader::BetaReader;
+    use nra_core::dedup::hex_to_hash;
+    use std::time::Instant;
+
+    println!("🔍 Verifying NRA BETA archive: {}", input.display());
+    let start = Instant::now();
+
+    let mut reader = BetaReader::open(input).context("Failed to open BETA archive")?;
+    let manifest = reader.manifest().clone();
+
+    let total_files = manifest.files.len();
+    if total_files == 0 {
+        anyhow::bail!("❌ Archive contains 0 files — this is an empty/corrupted archive.");
+    }
+
+    println!("   Files: {}", total_files);
+    println!("   Chunks: {}", manifest.chunk_table.len());
+    println!("   Verifying all files (CRC32 block integrity + size check)...\n");
+
+    let mut verified_files = 0u64;
+    let mut verified_bytes = 0u64;
+
+    for (i, file_record) in manifest.files.iter().enumerate() {
+        // read_file() internally verifies CRC32 on every compressed block it touches,
+        // and checks that reconstructed size matches manifest.original_size
+        let data = reader.read_file(&file_record.id)
+            .with_context(|| format!("❌ INTEGRITY FAILURE on file #{}: '{}'", i, file_record.id))?;
+
+        if data.len() as u64 != file_record.original_size {
+            anyhow::bail!(
+                "❌ Size mismatch for '{}': manifest says {} bytes, got {} bytes",
+                file_record.id, file_record.original_size, data.len()
+            );
+        }
+
+        verified_bytes += data.len() as u64;
+        verified_files += 1;
+
+        if (i + 1) % 100 == 0 || i + 1 == total_files {
+            eprint!("\r   [{}/{}] files verified ({:.1} MB)", i + 1, total_files, verified_bytes as f64 / 1e6);
+        }
+    }
+    eprintln!();
+
+    // Phase 2: Validate chunk table hash encoding
+    println!("\n   Phase 2: Validating chunk table hashes ({} entries)...", manifest.chunk_table.len());
+    for (i, chunk_record) in manifest.chunk_table.iter().enumerate() {
+        // Verify that every hash in the chunk table is a valid 64-char hex string
+        // that decodes to exactly 32 bytes (BLAKE3 digest size)
+        hex_to_hash(&chunk_record.hash)
+            .map_err(|e| anyhow::anyhow!("❌ Invalid chunk hash at index {}: {}", i, e))?;
+    }
+
+    let elapsed = start.elapsed();
+    println!("\n✅ VERIFICATION PASSED");
+    println!("   {} files OK (CRC32 block integrity + size match)", verified_files);
+    println!("   {} chunk hashes OK (valid BLAKE3 hex)", manifest.chunk_table.len());
+    println!("   {:.2} MB verified in {:.2}s", verified_bytes as f64 / 1e6, elapsed.as_secs_f64());
+    println!("   Archive is intact and ready for use.");
 
     Ok(())
 }

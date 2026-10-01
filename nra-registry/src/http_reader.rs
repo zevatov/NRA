@@ -81,6 +81,9 @@ impl HttpReader {
             nra_core::Compression::Lz4 => {
                 return Err(Error::new(ErrorKind::Unsupported, "LZ4 decompression not implemented yet"));
             }
+            _ => {
+                return Err(Error::new(ErrorKind::Unsupported, "Unknown compression algorithm"));
+            }
         };
         
         // If this is a chunked archive (Size mode), we slice out the exact inner file using inner_offset

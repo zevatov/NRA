@@ -9,6 +9,9 @@ import nra
 import matplotlib.pyplot as plt
 import numpy as np
 
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.join(SCRIPT_DIR, "..")
+ASSETS_DIR = os.path.join(PROJECT_ROOT, "docs", "assets")
 DATA_DIR = "/tmp/nra_ultimate_data"
 OUT_DIR = "/tmp/nra_ultimate_benchmarks"
 
@@ -116,7 +119,7 @@ for bar in bars:
     yval = bar.get_height()
     plt.text(bar.get_x() + bar.get_width()/2, yval + 0.2, f"{yval:.2f} MB", ha='center', va='bottom', fontsize=12, fontweight='bold')
 plt.tight_layout()
-plt.savefig("/Users/stanislav/Desktop/NAP/nra/docs/assets/ultimate_dedup.png")
+plt.savefig(os.path.join(ASSETS_DIR, "ultimate_dedup.png"))
 plt.close()
 
 # График 2: Скорость чтения (Dataset A)
@@ -132,7 +135,7 @@ for bar in bars:
     yval = bar.get_height()
     plt.text(bar.get_x() + bar.get_width()/2, yval + 20, f"{yval:.0f}/s", ha='center', va='bottom', fontsize=12, fontweight='bold')
 plt.tight_layout()
-plt.savefig("/Users/stanislav/Desktop/NAP/nra/docs/assets/ultimate_speed.png")
+plt.savefig(os.path.join(ASSETS_DIR, "ultimate_speed.png"))
 plt.close()
 
 # График 3: Скорость запаковки (Dataset C)
@@ -148,7 +151,7 @@ for bar in bars:
     yval = bar.get_height()
     plt.text(bar.get_x() + bar.get_width()/2, yval + 0.05, f"{yval:.2f}s", ha='center', va='bottom', fontsize=12, fontweight='bold')
 plt.tight_layout()
-plt.savefig("/Users/stanislav/Desktop/NAP/nra/docs/assets/ultimate_pack.png")
+plt.savefig(os.path.join(ASSETS_DIR, "ultimate_pack.png"))
 plt.close()
 
 # Save all results to a single giant JSON for Claude Opus

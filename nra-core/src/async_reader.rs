@@ -129,12 +129,11 @@ impl<R: AsyncRandomAccess> AsyncBetaReader<R> {
             .find(|f| f.id == file_id)
             .ok_or_else(|| io::Error::new(io::ErrorKind::NotFound, "File not found in BETA manifest"))?;
 
-        let chunk_hashes = file_record.chunks.clone();
         let expected_size = file_record.original_size as usize;
 
         let mut result = Vec::with_capacity(expected_size);
 
-        for hash_hex in &chunk_hashes {
+        for hash_hex in &file_record.chunks {
             let chunk_data = self.read_chunk(hash_hex).await?;
             result.extend_from_slice(&chunk_data);
         }

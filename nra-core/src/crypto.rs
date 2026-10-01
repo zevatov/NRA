@@ -26,6 +26,7 @@ static NONCE_COUNTER: AtomicU64 = AtomicU64::new(0);
 /// # Arguments
 /// * `data` - Plaintext data to encrypt
 /// * `key` - 32-byte (256-bit) encryption key
+#[must_use]
 pub fn encrypt_block(data: &[u8], key: &[u8; 32]) -> io::Result<Vec<u8>> {
     let cipher = Aes256Gcm::new_from_slice(key)
         .map_err(|e| io::Error::new(io::ErrorKind::InvalidInput, format!("Invalid key: {}", e)))?;
@@ -50,6 +51,7 @@ pub fn encrypt_block(data: &[u8], key: &[u8; 32]) -> io::Result<Vec<u8>> {
 /// Decrypt a block that was encrypted with `encrypt_block`.
 ///
 /// Expects input format: [nonce (12 bytes)] ++ [ciphertext + auth tag]
+#[must_use]
 pub fn decrypt_block(data: &[u8], key: &[u8; 32]) -> io::Result<Vec<u8>> {
     if data.len() < NONCE_SIZE + 16 {
         return Err(io::Error::new(

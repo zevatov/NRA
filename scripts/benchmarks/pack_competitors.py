@@ -68,7 +68,7 @@ def pack_nra(name, in_dir):
     t0 = time.time()
     # Call the Rust CLI
     import subprocess
-    cmd = ["cargo", "run", "--release", "--manifest-path", "/Users/stanislav/Desktop/NAP/nra/nra-cli/Cargo.toml", "--", "pack-beta", "--input", in_dir, "--output", out_file]
+    cmd = ["cargo", "run", "--release", "--manifest-path", os.path.join(os.path.dirname(__file__), "..", "nra-cli", "Cargo.toml"), "--", "pack-beta", "--input", in_dir, "--output", out_file]
     subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
     return time.time() - t0, os.path.getsize(out_file)
 

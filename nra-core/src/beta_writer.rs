@@ -116,6 +116,7 @@ impl BetaWriter {
         eprintln!("   Dedup ratio:   {:.2}x", ratio);
     }
 
+    #[must_use]
     pub fn save<P: AsRef<Path>>(self, path: P) -> io::Result<()> {
         let mut manifest = BetaManifest::new();
         manifest.summary.name = self.name.clone();
